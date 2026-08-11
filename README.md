@@ -4,7 +4,7 @@ A 3D-printable case for the [Toradex Mallow](https://www.toradex.com/products/ca
 
 119 × 78 × 38 mm. Three printed parts, no fasteners visible from outside, cover held by magnets.
 
-![Exploded view](docs/exploded.png)
+![Exploded view](docs/shots/exploded.png)
 
 ## What is here
 
