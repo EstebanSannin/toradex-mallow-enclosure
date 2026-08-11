@@ -6,7 +6,7 @@ A 3D-printable enclosure for the [Toradex Mallow](https://www.toradex.com/produc
 
 ![The printed case, rev D](docs/prototype.jpg)
 
-**[Open the 3D model in your browser →](https://<your-user>.github.io/toradex-mallow-enclosure/)** — orbit it, lift the cover, download any part as OBJ or GLB.
+**[Open the 3D model in your browser →](https://estebansannin.github.io/toradex-mallow-enclosure/)** — orbit it, lift the cover, download any part as OBJ or GLB.
 
 ## What is here
 
