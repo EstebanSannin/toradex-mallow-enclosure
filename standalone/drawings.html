@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mallow enclosure rev D — drawings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #2f4f7d; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
+    #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #2f4f7d; z-index: 9999; }
+    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
+    #__bundler_placeholder { color: #999; font-size: 14px; }
+  </style>
+  <noscript>
+    <style>#__bundler_loading { display: none; }</style>
+    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
+      This page requires JavaScript to display.
+    </div>
+  </noscript>
+</head>
+<body>
+  <div id="__bundler_thumbnail">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#2f4f7d"></rect>
+    <g fill="none" stroke="#eeebe5" stroke-width="12">
+      <rect x="380" y="280" width="440" height="240" rx="26"></rect>
+      <path d="M380 240h440M380 226v28M820 226v28" stroke-width="8"></path>
+      <circle cx="450" cy="350" r="22"></circle><circle cx="750" cy="350" r="22"></circle>
+      <circle cx="450" cy="450" r="22"></circle><circle cx="750" cy="450" r="22"></circle>
+    </g>
+  </svg>
+</div>
+  <div id="__bundler_loading">Unpacking...</div>
+
+  <script>
+    
+document.addEventListener('DOMContentLoaded', async function() {
+  const loading = document.getElementById('__bundler_loading');
+  function setStatus(msg) { if (loading) loading.textContent = msg; }
+
+  const FONT_MIME = /^(font[/]|application[/](x-)?font-|application[/]vnd\.ms-fontobject)/i;
+  const MIME_TOKEN = /^[\w.+-]+[/][\w.+-]+$/;
+  function toBase64(bytes) {
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) {
+      bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    }
+    return btoa(bin);
+  }
+
+  // Error sink persists across replaceWith since it's on window, not the DOM.
+  window.addEventListener('error', function(e) {
+    // Failed resource loads (CSP-blocked links, scripts, images) fire plain
+    // events at the element — warn only; real JS errors carry message/error.
+    if (!e.message && !e.error && e.target && e.target !== window) {
+      console.warn('[bundle] resource failed to load:',
+        e.target.tagName, String(e.target.src || e.target.href || ''));
+      return;
+    }
+    var p = document.body || document.documentElement;
+    var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
+    d.id = '__bundler_err';
+    d.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#2a1215;color:#ff8a80;padding:10px 14px;border-radius:8px;border:1px solid #5c2b2e;z-index:99999;white-space:pre-wrap;max-height:40vh;overflow:auto';
+    d.textContent = (d.textContent ? d.textContent + String.fromCharCode(10) : '') +
+      '[bundle] ' + (e.message || e.type) +
+      (e.filename ? ' (' + e.filename.slice(0, 60) + ':' + e.lineno + ')' : '');
+  }, true);
+
+  try {
+    const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
+    const templateEl = document.querySelector('script[type="__bundler/template"]');
+    if (!manifestEl || !templateEl) {
+      setStatus('Error: missing bundle data');
+      console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
+      return;
+    }
+
+    const manifest = JSON.parse(manifestEl.textContent);
+    let template = JSON.parse(templateEl.textContent);
+
+    // Nested page bundles (iframe targets). Each ships ONCE, in the ROOT
+    // document's manifest; frame srcs carry an about:blank#<uuid> marker
+    // instead of a substitutable uuid. Every document mints the blobs for
+    // its OWN frames — from local text at the root, or text obtained from
+    // its DIRECT parent over the relay protocol below — so each frame
+    // navigation stays same-origin with its initiator and a deduped page
+    // loads at any depth on any host, including a file:// download's
+    // opaque origins (where a blob minted by one document cannot be
+    // navigated to by another).
+    const pageOrderEl = document.querySelector('script[type="__bundler/page_order"]');
+    const pageOrder = pageOrderEl ? JSON.parse(pageOrderEl.textContent) : [];
+    const pageSet = new Set(pageOrder);
+    const pageTexts = {};
+
+    // ── Nested-page text protocol (parent-chain relay) ──
+    // Page bundles ship once, in the ROOT document's manifest. Every
+    // document mints the blobs for its OWN frames, obtaining page text
+    // through a strict parent-chain relay: a document only ever SENDS to
+    // its direct parent (which, for every document the publisher's own
+    // runtime minted, is another publisher document) and only ACCEPTS
+    // text from that direct parent; requests from below are honored only
+    // for the document's own child frames, and the ROOT never sends
+    // upward at all. That last rule is load-bearing: the artifact host's
+    // frame-ancestors allows claude.ai (and friends) to frame an
+    // artifact, so window.top can be a FOREIGN document — a top-addressed
+    // protocol would hand page uuids to that ancestor and accept forged
+    // "page text" from it, minting attacker HTML as an artifact-origin
+    // blob document. The chain never touches the ancestor: requests stop
+    // at the root, replies are origin-addressed per hop (never '*' when
+    // an origin exists), and both directions are origin-gated (on https
+    // a foreign sender's origin can never equal this document's; in
+    // opaque contexts — file:// — everything serializes as 'null', where
+    // an embedded EXTERNAL frame still fails the gate by carrying its
+    // own real origin, and a sandboxed child of such a frame is excluded
+    // by the own-child-frames check plus uuid unguessability). Shape is
+    // deny-by-default: one request form, one reply form, no error
+    // replies.
+    // window.origin is the SERIALIZED SECURITY origin ('null' in opaque
+    // contexts such as a sandboxed preview iframe) — location.origin is
+    // computed from the URL and stays 'https://…' even when the document
+    // is sandboxed, which would misgate every opaque chain.
+    const OWN_TARGET = /^https?:[/][/]/.test(window.origin || '')
+      ? window.origin
+      : '*';
+    function trustedOrigin(e) {
+      if (e.origin === window.origin) return true; // https chains; opaque==opaque
+      // file:// trees: Chrome serializes the file document's origin as
+      // 'file://' while the blob: documents it mints serialize as 'null',
+      // so the two legitimate shapes can never string-match — accept the
+      // pair in both directions. https origins never serialize as either,
+      // and sender identity (own child frame / direct parent) is checked
+      // separately.
+      return (
+        (e.origin === 'null' &&
+          (window.origin === 'file://' ||
+            window.location.protocol === 'file:')) ||
+        (/^file:/.test(e.origin) && window.origin === 'null')
+      );
+    }
+    // Non-empty only in the root document (nested bundles ship an empty
+    // island), so it doubles as the root marker: the root answers from
+    // local text and treats a miss as authoritative — never relaying to
+    // its (possibly foreign) parent.
+    const isPageRoot = pageOrder.length > 0;
+    const blobUrls = {};
+    const resourceBlobs = {};
+    const UUID_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+    const pendingFrames = {}; // uuid -> [{el, frag}] awaiting text for own frames
+    const pendingRelays = {}; // uuid -> [childWindow] awaiting text to pass down
+    function mountPage(el, frag, text) {
+      const pageBlob = new Blob([text], { type: 'text/html' });
+      const u = URL.createObjectURL(pageBlob);
+      resourceBlobs[u] = pageBlob;
+      el.src = u + frag;
+    }
+    function deliverPage(uuid, text) {
+      const frames = pendingFrames[uuid];
+      delete pendingFrames[uuid];
+      if (frames) for (const f of frames) mountPage(f.el, f.frag, text);
+      const relays = pendingRelays[uuid];
+      delete pendingRelays[uuid];
+      if (relays) {
+        for (const cw of relays) {
+          try { cw.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
+        }
+      }
+    }
+    function ownFrameWindows() {
+      const out = [];
+      for (const f of Array.from(document.querySelectorAll('iframe'))) {
+        try { if (f.contentWindow) out.push(f.contentWindow); } catch (err) { /* detached */ }
+      }
+      return out;
+    }
+    window.addEventListener('message', function (e) {
+      const d = e.data;
+      if (!d || typeof d !== 'object' || !e.source) return;
+      // Origin gate first; the structural checks below (own-child-frames
+      // for requests, direct-parent + solicited-uuid for replies, the
+      // root's never-relay rule) are what hold in fully opaque chains
+      // where origin strings can't discriminate — a sandboxed root's
+      // FOREIGN wrapper still fails all three even though both serialize
+      // as real-vs-'null' rather than matching.
+      if (!trustedOrigin(e)) return;
+      if (typeof d.__bundler_need === 'string' && UUID_SHAPE.test(d.__bundler_need)) {
+        // Requests are honored only for this document's own child frames.
+        if (ownFrameWindows().indexOf(e.source) < 0) return;
+        const uuid = d.__bundler_need;
+        const text = pageTexts[uuid];
+        if (typeof text === 'string') {
+          try { e.source.postMessage({ __bundler_page: uuid, __bundler_text: text }, OWN_TARGET); } catch (err) { /* gone */ }
+          return;
+        }
+        if (isPageRoot || window.parent === window) return; // authoritative miss
+        const waiting = pendingRelays[uuid];
+        if (waiting) {
+          if (waiting.indexOf(e.source) < 0) waiting.push(e.source);
+          return;
+        }
+        // Never-answered uuids would otherwise accumulate forever under a
+        // request spray; past the cap (far above any real page count) new
+        // relays are dropped rather than remembered.
+        if (Object.keys(pendingRelays).length >= 128) return;
+        pendingRelays[uuid] = [e.source];
+        window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
+      } else if (
+        typeof d.__bundler_page === 'string' &&
+        UUID_SHAPE.test(d.__bundler_page) &&
+        typeof d.__bundler_text === 'string'
+      ) {
+        // The shape test is load-bearing beyond tidiness: the solicited
+        // check below uses the in operator, which matches prototype keys
+        // ('__proto__', 'constructor') — an unshaped key would reach
+        // deliverPage and throw, painting the error banner.
+        // Text is accepted only from the direct parent — the document
+        // that minted this one.
+        if (e.source !== window.parent || window.parent === window) return;
+        if (!(d.__bundler_page in pendingFrames) && !(d.__bundler_page in pendingRelays)) return;
+        deliverPage(d.__bundler_page, d.__bundler_text);
+      }
+    });
+
+    const uuids = Object.keys(manifest);
+    setStatus('Unpacking ' + uuids.length + ' assets...');
+
+    await Promise.all(uuids.map(async (uuid) => {
+      const entry = manifest[uuid];
+      try {
+        const binaryStr = atob(entry.data);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+
+        let finalBytes = bytes;
+        if (entry.compressed) {
+          if (typeof DecompressionStream !== 'undefined') {
+            const ds = new DecompressionStream('gzip');
+            const writer = ds.writable.getWriter();
+            const reader = ds.readable.getReader();
+            writer.write(bytes);
+            writer.close();
+            const chunks = [];
+            let totalLen = 0;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              chunks.push(value);
+              totalLen += value.length;
+            }
+            finalBytes = new Uint8Array(totalLen);
+            let offset = 0;
+            for (const chunk of chunks) { finalBytes.set(chunk, offset); offset += chunk.length; }
+          } else {
+            console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
+          }
+        }
+
+        if (pageSet.has(uuid)) {
+          pageTexts[uuid] = new TextDecoder().decode(finalBytes);
+          return;
+        }
+        if (FONT_MIME.test(entry.mime) && MIME_TOKEN.test(entry.mime)) {
+          // Strict artifact hosts allow font-src data: but not blob:.
+          blobUrls[uuid] = 'data:' + entry.mime + ';base64,' +
+            (entry.compressed ? toBase64(finalBytes) : entry.data);
+        } else {
+          const blob = new Blob([finalBytes], { type: entry.mime });
+          blobUrls[uuid] = URL.createObjectURL(blob);
+          resourceBlobs[blobUrls[uuid]] = blob;
+        }
+      } catch (err) {
+        console.error('Failed to decode asset ' + uuid + ':', err);
+        const blob = new Blob([], { type: entry.mime });
+        blobUrls[uuid] = URL.createObjectURL(blob);
+        resourceBlobs[blobUrls[uuid]] = blob;
+      }
+    }));
+
+    const extResEl = document.querySelector('script[type="__bundler/ext_resources"]');
+    const extResources = extResEl ? JSON.parse(extResEl.textContent) : [];
+    const resourceMap = {};
+    for (const entry of extResources) {
+      if (blobUrls[entry.uuid]) resourceMap[entry.id] = blobUrls[entry.uuid];
+    }
+
+    // Artifact-host CSP (connect-src 'self') refuses fetch() of blob: URLs —
+    // consumers read these Blobs directly. Survives the swap like the error sink.
+    window.__resourceBlobs = resourceBlobs;
+
+    setStatus('Rendering...');
+    // Page uuids have no blob here — they ride inside about:blank#<uuid>
+    // frame markers the pass below resolves after the swap.
+    for (const uuid of uuids) {
+      if (pageSet.has(uuid)) continue;
+      template = template.split(uuid).join(blobUrls[uuid]);
+    }
+
+    // Strip integrity + crossorigin — blob URLs from a file:// document inherit
+    // a null origin, so crossorigin forces a CORS fetch that SRI then rejects.
+    // The manifest bytes are ours; SRI protects against CDN compromise, not this.
+    template = template.replace(/\s+integrity="[^"]*"/gi, '').replace(/\s+crossorigin="[^"]*"/gi, '');
+
+    const resourceScript = '<script>window.__resources = ' +
+      JSON.stringify(resourceMap).replace(/<\//g, '<\\/') +
+      ';</' + 'script>';
+    // Inject after <head> so the DOCTYPE stays first; prepending the script
+    // would push the parser into quirks mode. DOMParser always emits a <head>
+    // (synthesizing one if the source HTML omitted it) but may carry
+    // attributes through, so match the full opening tag. slice() rather than
+    // replace() keeps us clear of $-pattern substitution in resourceScript.
+    const headOpen = template.match(/<head[^>]*>/i);
+    if (headOpen) {
+      const i = headOpen.index + headOpen[0].length;
+      template = template.slice(0, i) + resourceScript + template.slice(i);
+    }
+
+    // Parse the template and swap the root element. Scripts inserted via
+    // DOMParser/replaceWith are inert per spec — re-create each with
+    // createElement so they execute, awaiting onload for src scripts to
+    // preserve ordering (React before ReactDOM before Babel before text/babel).
+    const doc = new DOMParser().parseFromString(template, 'text/html');
+    document.documentElement.replaceWith(doc.documentElement);
+
+    // Resolve page-frame markers: mint this document's own blob for each
+    // framed page — from local text when this is the root, otherwise by
+    // asking the direct parent over the relay protocol above. An
+    // unanswered request leaves the frame on about:blank, the same
+    // degraded state as a refused embed.
+    {
+      const MARKER = /^about:blank#([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(#.*)?$/;
+      const needed = [];
+      for (const el of Array.from(document.querySelectorAll('iframe'))) {
+        const m = MARKER.exec(el.getAttribute('src') || '');
+        if (!m) continue;
+        const text = pageTexts[m[1]];
+        if (typeof text === 'string') {
+          mountPage(el, m[2] || '', text);
+        } else if (window.parent !== window && !isPageRoot) {
+          const had = pendingFrames[m[1]];
+          (pendingFrames[m[1]] = had || []).push({ el: el, frag: m[2] || '' });
+          if (!had) needed.push(m[1]);
+        }
+      }
+      for (const uuid of needed) {
+        window.parent.postMessage({ __bundler_need: uuid }, OWN_TARGET);
+      }
+    }
+
+    const dead = Array.from(document.scripts);
+    for (const old of dead) {
+      const s = document.createElement('script');
+      for (const a of old.attributes) s.setAttribute(a.name, a.value);
+      s.textContent = old.textContent;
+      // text/babel scripts with a src: read and inline. transformScriptTags
+      // does XHR against the src, but blob:null/ from a file:// origin is
+      // silently dropped. Inlining makes it a plain inline babel script,
+      // which transformScriptTags handles unconditionally.
+      if ((s.type === 'text/babel' || s.type === 'text/jsx') && s.src) {
+        const pre = resourceBlobs[s.src.split('#')[0]];
+        s.textContent = pre ? await pre.text() : await (await fetch(s.src)).text();
+        s.removeAttribute('src');
+      }
+      const p = s.src ? new Promise(function(r) { s.onload = s.onerror = r; }) : null;
+      old.replaceWith(s);
+      if (p) await p;
+    }
+    // Babel standalone auto-transforms type=text/babel on DOMContentLoaded,
+    // which fired before we swapped the document. Trigger manually if present.
+    if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
+      window.Babel.transformScriptTags();
+    }
+  } catch (err) {
+    setStatus('Error unpacking: ' + err.message);
+    console.error('Bundle unpack error:', err);
+  }
+});
+
+  </script>
+
+  <script type="__bundler/manifest">
+{"e43bdddf-6305-49cc-b82e-333da6087406":{"mime":"text/javascript","compressed":true,"data":"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"}}
+  </script>
+
+  <script type="__bundler/ext_resources">
+[]
+  </script>
+
+  <script type="__bundler/page_order">
+[]
+  </script>
+
+  <script type="__bundler/template">
+"<!DOCTYPE html>\n<html lang=\"en\"><head>\n<meta charset=\"utf-8\">\n<title>Mallow enclosure rev D — drawings<\u002Ftitle>\n<style>\n  doc-page:not(:defined){visibility:hidden}\n  body{font-family:ui-sans-serif,system-ui,\"Helvetica Neue\",sans-serif;color:#23262a}\n  .page{padding:11mm 12mm;box-sizing:border-box;display:flex;flex-direction:column}\n  .head{display:flex;justify-content:space-between;align-items:baseline;\n        border-bottom:.5pt solid #c9c2b4;padding-bottom:3mm;margin-bottom:4mm}\n  .head h1{font-size:13pt;margin:0;letter-spacing:-.01em}\n  .head .meta{font-size:8pt;color:#6a7079;text-align:right;line-height:1.4}\n  .grid{display:flex;gap:6mm;align-items:flex-start;flex-wrap:nowrap}\n  .col{display:flex;flex-direction:column;gap:5mm}\n  .vt{font-size:7.5pt;text-transform:uppercase;letter-spacing:.07em;color:#6a7079;margin:0 0 1mm}\n  svg{display:block;overflow:visible}\n  .out{fill:none;stroke:#23262a;stroke-width:.35}\n  .in{fill:none;stroke:#23262a;stroke-width:.25}\n  .hid{fill:none;stroke:#9aa0a6;stroke-width:.2;stroke-dasharray:2 1.2}\n  .ctr{fill:none;stroke:#b9a24a;stroke-width:.15;stroke-dasharray:4 1 1 1}\n  .fill{fill:#e8e4dc;stroke:#23262a;stroke-width:.3}\n  .dim{fill:none;stroke:#4a6fa5;stroke-width:.16}\n  .dt{fill:#2f4f7d;font-size:3.4px;font-family:ui-sans-serif,system-ui,sans-serif}\n  .lbl{fill:#23262a;font-size:3.5px;font-family:ui-sans-serif,system-ui,sans-serif}\n  .note{font-size:7.5pt;color:#6a7079;line-height:1.45;margin:3mm 0 0}\n  table{border-collapse:collapse;font-size:7.5pt;margin-top:2mm}\n  th,td{text-align:left;padding:1mm 3mm 1mm 0;border-bottom:.4pt solid #eae5da;white-space:nowrap}\n  th{color:#6a7079;font-size:7pt;text-transform:uppercase;letter-spacing:.06em}\n<\u002Fstyle>\n<\u002Fhead>\n<body>\n\n\n<doc-page size=\"a4\" orientation=\"landscape\">\n  <section class=\"page\" id=\"p1\">\n    <div class=\"head\">\n      <h1>Shell — plan and rear elevation<\u002Fh1>\n      <div class=\"meta\">Mallow enclosure rev D · 0.65:1 at A4 · dimensions govern · mm<br>PETG, 2.5 mm wall unless noted<\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"grid\">\n      <div class=\"col\"><p class=\"vt\">Plan, seen from above (rear at top)<\u002Fp><div id=\"v-plan\"><\u002Fdiv><\u002Fdiv>\n      <div class=\"col\">\n        <p class=\"vt\">Rear elevation, from outside<\u002Fp><div id=\"v-rear\"><\u002Fdiv>\n        <p class=\"vt\">Section A–A through a corner post, true scale<\u002Fp><div id=\"v-sec\"><\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n    <p class=\"note\">Heights on the shell are measured from its own bottom face, which sits on the base plate. Cavity 114 × 74 mm with a 4 mm inner corner radius; the board pocket shown dashed is 100 × 72 with the rear edge 0.3 mm off the panel.<\u002Fp>\n  <\u002Fsection>\n\n  <section class=\"page\" id=\"p2\">\n    <div class=\"head\">\n      <h1>Shell — front elevation and openings<\u002Fh1>\n      <div class=\"meta\">Mallow enclosure rev D · 0.65:1 at A4 · dimensions govern · mm<br>All openings include clearance<\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"grid\">\n      <div class=\"col\"><p class=\"vt\">Front elevation, from outside<\u002Fp><div id=\"v-front\"><\u002Fdiv>\n        <p class=\"vt\">Rear openings — cut sizes<\u002Fp><div id=\"t-ports\"><\u002Fdiv><\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <section class=\"page\" id=\"p3\">\n    <div class=\"head\">\n      <h1>Base plate<\u002Fh1>\n      <div class=\"meta\">Mallow enclosure rev D · 0.65:1 at A4 · dimensions govern · mm<br>PETG, 2.5 mm plate<\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"grid\">\n      <div class=\"col\"><p class=\"vt\">Plan, seen from above (rear at top)<\u002Fp><div id=\"v-base\"><\u002Fdiv><\u002Fdiv>\n      <div class=\"col\">\n        <p class=\"vt\">Section B–B, true scale<\u002Fp><div id=\"v-basesec\"><\u002Fdiv>\n        <p class=\"vt\">Underside features<\u002Fp><div id=\"t-base\"><\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <section class=\"page\" id=\"p4\">\n    <div class=\"head\">\n      <h1>Top cover<\u002Fh1>\n      <div class=\"meta\">Mallow enclosure rev D · 0.65:1 at A4 · dimensions govern · mm<br>PETG, 2.5 mm plate + four posts<\u002Fdiv>\n    <\u002Fdiv>\n    <div class=\"grid\">\n      <div class=\"col\"><p class=\"vt\">Underside, seen from below (rear at top)<\u002Fp><div id=\"v-cover\"><\u002Fdiv><\u002Fdiv>\n      <div class=\"col\">\n        <p class=\"vt\">Section C–C through two posts, true scale<\u002Fp><div id=\"v-coversec\"><\u002Fdiv>\n        <p class=\"note\" style=\"max-width:80mm\">The cover carries no fasteners. It rests on the four post faces and is held by four 5 × 2 mm magnets glued into the pockets, meeting their pairs in the shell posts. Set the polarity by test before the glue sets.<\u002Fp>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n<script src=\"e43bdddf-6305-49cc-b82e-333da6087406\"><\u002Fscript>\n<\u002Fdoc-page>\n<script>\n/* ---- every number below is the rev D model ---- */\nconst W = 119, D = 78, R = 6.5, T = 2.5, TR = 1.5;\nconst FLOOR = 2.5, STANDOFF = 10, PCB_T = 1.6;\nconst PCB_Y = FLOOR + STANDOFF, PCB_TOP = PCB_Y + PCB_T;\nconst WALL_TOP = 32, TOP_T = 2.5, SLOT = 3.5;\nconst SH = WALL_TOP - FLOOR;                    /* shell height, part local */\nconst IX = W / 2 - T, IZ = D / 2 - T, RI = R - T;\nconst PX = 54.75, PZ = 32, GAP = 51;\nconst BZ = 1.2, HX = 47, HZ = 33, PCB_W = 100, PCB_D = 72;\nconst MNTX = 42, MNTZ = 22, MAG_D = 5.2, MAG_H = 2;\nconst CL = 0.6;\nconst ports = [\n  ['Power X5', -35.29, 17.30, 7.00, 0.6],\n  ['HDMI X14', -15.79, 15.00, 6.28, 0.6],\n  ['USB-C X8', 1.01, 8.92, 3.27, 0.6],\n  ['USB-A stack X9', 18.40, 14.30, 16.12, 0.4],\n  ['RJ45 X2', 35.80, 15.74, 13.80, 0.6]\n];\nconst SWX = [-41, -27], LEDX = [-36, -32];\n\nconst N = v => (Math.round(v * 100) / 100).toString();\nlet out = '';\nconst el = s => `<g>${s}<\u002Fg>`;\nfunction rr(x, y, w, h, r, cls) {\n  return `<rect class=\"${cls}\" x=\"${N(x)}\" y=\"${N(y)}\" width=\"${N(w)}\" height=\"${N(h)}\" rx=\"${N(r)}\" ry=\"${N(r)}\"/>`;\n}\nconst ln = (x1, y1, x2, y2, cls) =>\n  `<line class=\"${cls}\" x1=\"${N(x1)}\" y1=\"${N(y1)}\" x2=\"${N(x2)}\" y2=\"${N(y2)}\"/>`;\nconst ci = (cx, cy, d, cls) => `<circle class=\"${cls}\" cx=\"${N(cx)}\" cy=\"${N(cy)}\" r=\"${N(d / 2)}\"/>`;\nconst tx = (x, y, s, cls = 'dt', anchor = 'middle') =>\n  `<text class=\"${cls}\" x=\"${N(x)}\" y=\"${N(y)}\" text-anchor=\"${anchor}\">${s}<\u002Ftext>`;\nfunction tick(x, y, dx, dy) { return ln(x - dx, y - dy, x + dx, y + dy, 'dim'); }\n/* horizontal dimension between x1 and x2, dim line at y, features at fy */\nfunction dimH(x1, x2, y, fy, label) {\n  let s = ln(x1, fy, x1, y + (y > fy ? 1.6 : -1.6), 'dim') + ln(x2, fy, x2, y + (y > fy ? 1.6 : -1.6), 'dim');\n  s += ln(x1, y, x2, y, 'dim') + tick(x1, y, 0, 1) + tick(x2, y, 0, 1);\n  s += tx((x1 + x2) / 2, y - 1.1, label ?? N(Math.abs(x2 - x1)));\n  return s;\n}\nfunction dimV(y1, y2, x, fx, label) {\n  let s = ln(fx, y1, x + (x > fx ? 1.6 : -1.6), y1, 'dim') + ln(fx, y2, x + (x > fx ? 1.6 : -1.6), y2, 'dim');\n  s += ln(x, y1, x, y2, 'dim') + tick(x, y1, 1, 0) + tick(x, y2, 1, 0);\n  s += `<text class=\"dt\" x=\"${N(x - 1.1)}\" y=\"${N((y1 + y2) / 2)}\" text-anchor=\"middle\" transform=\"rotate(-90 ${N(x - 1.1)} ${N((y1 + y2) / 2)})\">${label ?? N(Math.abs(y2 - y1))}<\u002Ftext>`;\n  return s;\n}\nconst leader = (x, y, tox, toy, label) =>\n  ln(x, y, tox, toy, 'dim') + tx(tox + (tox > x ? 1 : -1), toy + 0.9, label, 'dt', tox > x ? 'start' : 'end');\n\nconst F = 0.65;                                 /* fit the views onto A4 landscape */\nfunction view(id, w, h, pad, inner) {\n  document.getElementById(id).innerHTML =\n    `<svg viewBox=\"${N(-w / 2 - pad)} ${N(-h / 2 - pad)} ${N(w + 2 * pad)} ${N(h + 2 * pad)}\" style=\"width:${N((w + 2 * pad) * F)}mm\">${inner}<\u002Fsvg>`;\n}\n\n/* ============ shell plan ============ */\n{\n  let s = rr(-W / 2, -D / 2, W, D, R, 'out');\n  /* cavity: rear inner face 1.5 in, others 2.5 */\n  s += `<path class=\"in\" d=\"M ${N(-IX)} ${N(-(D / 2 - TR))} L ${N(IX)} ${N(-(D / 2 - TR))} L ${N(IX)} ${N(IZ - RI)} A ${N(RI)} ${N(RI)} 0 0 1 ${N(IX - RI)} ${N(IZ)} L ${N(-IX + RI)} ${N(IZ)} A ${N(RI)} ${N(RI)} 0 0 1 ${N(-IX)} ${N(IZ - RI)} Z\"/>`;\n  /* board pocket, dashed: rear edge 0.3 off the panel */\n  const bz0 = -(D / 2 - TR - 0.3), bz1 = bz0 + PCB_D;\n  s += rr(-PCB_W / 2, bz0, PCB_W, PCB_D, 4, 'hid');\n  /* corner posts */\n  [-1, 1].forEach(sx => [-1, 1].forEach(sz => {\n    s += ci(sx * PX, -sz * PZ, 8, 'fill') + ci(sx * PX, -sz * PZ, 2.8, 'in');\n    s += ln(sx * PX - 5.5, -sz * PZ, sx * PX + 5.5, -sz * PZ, 'ctr');\n    s += ln(sx * PX, -sz * PZ - 5.5, sx * PX, -sz * PZ + 5.5, 'ctr');\n  }));\n  s += dimH(-W / 2, W / 2, -D / 2 - 14, -D / 2, N(W));\n  s += dimH(-PX, PX, -D / 2 - 8, -PZ, N(PX * 2));\n  s += dimV(-D / 2, D / 2, -W / 2 - 14, -W / 2, N(D));\n  s += dimV(-PZ, PZ, -W / 2 - 8, -PX, N(PZ * 2));\n  s += dimV(bz0, bz1, W / 2 + 8, PCB_W / 2, N(PCB_D));\n  s += dimH(-PCB_W / 2, PCB_W / 2, D / 2 + 8, D / 2, N(PCB_W));\n  s += leader(PX + 4, -PZ - 4, PX + 13, -PZ - 11, 'Ø8, bore Ø2.8');\n  s += leader(-W / 2 + 1.9, -D / 2 + 1.9, -W / 2 - 11, -D / 2 - 7, 'R6.5');\n  s += leader(-IX, 0, -IX - 9, 6, 'wall 2.5');\n  s += leader(0, -(D / 2 - TR / 2), 8, -D / 2 - 7, 'rear panel 1.5');\n  view('v-plan', W, D, 17, s);\n}\n\n/* ============ shell rear elevation ============ */\n{\n  const h = SH;\n  let s = rr(-W / 2, -h / 2, W, h, 0, 'out');\n  s += ln(-W / 2, h / 2 - (PCB_Y - FLOOR), W / 2, h / 2 - (PCB_Y - FLOOR), 'hid');\n  ports.forEach(([, c, w, ph, clt]) => {\n    const b = (PCB_TOP - CL) - FLOOR, t = (PCB_TOP + ph + clt) - FLOOR;\n    s += rr(c - w / 2 - CL, h / 2 - t, w + 2 * CL, t - b, 0.8, 'in');\n  });\n  s += dimH(-W / 2, W / 2, -h / 2 - 16, -h / 2, N(W));\n  let y = -h / 2 - 4;\n  ports.forEach(([, c, w], i) => {\n    s += dimH(-W / 2, c, y - (i % 3) * 5, h / 2 - ((PCB_TOP + 3) - FLOOR), N(c + W / 2));\n  });\n  ports.forEach(([, c, w, ph, clt]) => {\n    const t = (PCB_TOP + ph + clt) - FLOOR, b = (PCB_TOP - CL) - FLOOR;\n    s += dimH(c - w / 2 - CL, c + w / 2 + CL, h / 2 - t - 3, h / 2 - t, N(w + 2 * CL));\n  });\n  s += dimV(h / 2 - ((PCB_TOP - CL) - FLOOR), h / 2, W / 2 + 6, W / 2, N((PCB_TOP - CL) - FLOOR));\n  s += dimV(-h / 2, h / 2, W / 2 + 14, W / 2, N(h));\n  s += tx(0, h / 2 + 9, \"centres measured from the box's left edge\", 'lbl');\n  view('v-rear', W, SH, 20, s);\n}\n\n/* ============ shell section through a corner post, true scale ============ */\n{\n  const h = SH, x0 = 46, x1 = W / 2;            /* real x range shown */\n  const w = x1 - x0, L = v => v - (x0 + x1) / 2; /* world x -> local */\n  const P = p => h / 2 - p;                      /* part height -> local y */\n  let s = '';\n  s += rr(L(IX), -h / 2, T, h, 0, 'fill');                       /* wall */\n  s += rr(L(PX - 4), -h / 2, 8, h, 0, 'fill');                    /* post, fused to the wall */\n  s += rr(L(PX - 1.4), P(27.5), 2.8, 27.5, 0, 'in');              /* M3 bore, open at the bottom */\n  s += rr(L(PX - MAG_D / 2), P(SH), MAG_D, MAG_H, 0, 'in');       /* magnet pocket in the top */\n  s += dimV(-h / 2, h / 2, L(x1) + 7, L(x1), N(h));\n  s += dimV(P(SH), P(SH - MAG_H), L(x0) - 5, L(PX - MAG_D / 2), N(MAG_H));\n  s += dimH(L(PX - 4), L(PX + 4), P(SH) - 7, P(SH), 'Ø8');\n  s += leader(L(PX), P(14), L(x0) - 3, P(20), 'bore Ø2.8, open at the bottom');\n  s += leader(L(IX + T / 2), P(8), L(x1) + 3, P(4), 'wall 2.5');\n  s += leader(L(PX), P(SH) + 1, L(x1) + 3, P(SH) - 4, 'Ø5.2 × 2 pocket');\n  view('v-sec', w, SH, 30, s);\n}\n\n/* ============ shell front elevation ============ */\n{\n  const h = SH;\n  let s = rr(-W / 2, -h / 2, W, h, 0, 'out');\n  s += ln(-W / 2, h / 2 - (PCB_Y - FLOOR), W / 2, h / 2 - (PCB_Y - FLOOR), 'hid');\n  /* front seen from outside: x mirrored */\n  SWX.forEach(x => { s += ci(-x, h / 2 - (PCB_TOP + 1.65 - FLOOR), 4, 'in'); });\n  LEDX.forEach(x => { s += ci(-x, h / 2 - (PCB_TOP + 0.85 - FLOOR), 2, 'in'); });\n  s += dimH(-W / 2, W / 2, -h / 2 - 16, -h / 2, N(W));\n  s += dimV(-h / 2, h / 2, -W / 2 - 8, -W / 2, N(h));\n  s += ln(50, -h / 2 - 2, 50, h / 2 + 4, 'hid');\n  s += tx(50, h / 2 + 7, \"board's right edge\", 'lbl');\n  SWX.concat(LEDX).forEach((x, i) => {\n    const rx = -x, fy = h / 2 - ((i < 2 ? PCB_TOP + 1.65 : PCB_TOP + 0.85) - FLOOR);\n    s += dimH(50, rx, -h / 2 - 4 - (i % 2) * 4, fy, N(50 - rx));\n  });\n  s += dimV(h / 2 - (PCB_TOP + 1.65 - FLOOR), h / 2, W / 2 + 6, W / 2, N(PCB_TOP + 1.65 - FLOOR));\n  s += leader(-SWX[0], h / 2 - (PCB_TOP + 1.65 - FLOOR) - 2, -SWX[0] - 10, -h / 2 + 6, 'Ø4 switch');\n  s += leader(-LEDX[0], h / 2 - (PCB_TOP + 0.85 - FLOOR) - 1, -LEDX[0] + 10, -h / 2 + 10, 'Ø2 LED');\n  view('v-front', W, SH, 22, s);\n}\n\n/* ============ base plate plan ============ */\n{\n  let s = rr(-W / 2, -D / 2, W, D, R, 'out');\n  [-1, 1].forEach(sx => {\n    /* rear standoff Ø6, front standoff Ø7 */\n    s += ci(sx * HX, -(BZ + HZ), 6, 'fill') + ci(sx * HX, -(BZ + HZ), 2.8, 'in');\n    s += ci(sx * HX, -(BZ - HZ), 7, 'fill') + ci(sx * HX, -(BZ - HZ), 2.8, 'in');\n    [-1, 1].forEach(sz => {\n      s += ci(sx * PX, -sz * PZ, 3.4, 'in') + ci(sx * PX, -sz * PZ, 6.2, 'hid');\n      s += ci(sx * MNTX, -sz * MNTZ, 10.4, 'hid');\n    });\n  });\n  s += dimH(-W / 2, W / 2, -D / 2 - 14, -D / 2, N(W));\n  s += dimV(-D / 2, D / 2, -W / 2 - 14, -W / 2, N(D));\n  s += dimH(-HX, HX, -D / 2 - 8, -(BZ + HZ), N(HX * 2));\n  s += dimV(-(BZ + HZ), -(BZ - HZ), -W / 2 - 8, -HX, N(HZ * 2));\n  s += dimH(-PX, PX, D / 2 + 8, PZ, N(PX * 2));\n  s += dimV(-PZ, PZ, W / 2 + 8, PX, N(PZ * 2));\n  s += dimH(-MNTX, MNTX, D / 2 + 14, MNTZ, N(MNTX * 2));\n  s += dimV(-MNTZ, MNTZ, W / 2 + 14, MNTX, N(MNTZ * 2));\n  s += leader(HX + 3, -(BZ + HZ) - 1, HX - 2, -(BZ + HZ) + 13, 'Ø6 standoff, bore Ø2.8');\n  s += leader(-HX - 3.5, -(BZ - HZ), -HX + 12, -(BZ - HZ) - 4, 'Ø7 standoff, bore Ø2.8');\n  s += leader(PX, PZ + 3.2, PX - 14, PZ - 8, 'Ø3.4 through, Ø6.2 c-bore 1.5 deep');\n  s += leader(-MNTX, MNTZ + 5.2, -MNTX + 2, MNTZ - 12, 'Ø10.4 pocket, 2 deep');\n  view('v-base', W, D, 19, s);\n}\n\n/* ============ base plate section, true scale ============ */\n{\n  const h = FLOOR + STANDOFF, P = p => h / 2 - p;\n  let s = rr(-W / 2, P(FLOOR), W, FLOOR, 0, 'fill');\n  [-1, 1].forEach(sx => {\n    const d = sx < 0 ? 7 : 6;\n    s += rr(sx * HX - d / 2, P(h), d, STANDOFF, 0, 'fill');\n    s += rr(sx * HX - 1.4, P(h), 2.8, STANDOFF, 0, 'in');\n    s += rr(sx * PX - 1.7, P(FLOOR), 3.4, FLOOR, 0, 'in');\n    s += rr(sx * PX - 3.1, P(1.5), 6.2, 1.5, 0, 'in');\n    s += rr(sx * MNTX - 10.4 / 2, P(2), 10.4, 2, 0, 'in');\n  });\n  s += dimV(P(h), P(0), -W / 2 - 7, -HX, N(h));\n  s += dimV(P(FLOOR), P(0), W / 2 + 7, W / 2, N(FLOOR));\n  s += leader(-HX, P(h) + 3, -HX - 16, P(h) - 5, 'Ø7 standoff, front pair');\n  s += leader(HX, P(h) + 3, HX + 14, P(h) - 5, 'Ø6 standoff, rear pair');\n  s += leader(-MNTX, P(1), -MNTX - 8, P(0) + 7, 'Ø10.4 × 2, open at the underside');\n  s += leader(PX, P(0.7), PX + 6, P(0) + 7, 'Ø6.2 c-bore 1.5 deep');\n  s += tx(0, P(h) - 12, 'standoff tops are the board underside, 12.5 above the base', 'lbl');\n  view('v-basesec', W, FLOOR + STANDOFF, 24, s);\n}\n\n/* ============ cover underside ============ */\n{\n  let s = rr(-W / 2, -D / 2, W, D, R, 'out');\n  [-1, 1].forEach(sx => [-1, 1].forEach(sz => {\n    s += ci(sx * PX, -sz * PZ, 8, 'fill') + ci(sx * PX, -sz * PZ, MAG_D, 'in');\n  }));\n  s += dimH(-W / 2, W / 2, -D / 2 - 14, -D / 2, N(W));\n  s += dimV(-D / 2, D / 2, -W / 2 - 14, -W / 2, N(D));\n  s += dimH(-PX, PX, -D / 2 - 8, -PZ, N(PX * 2));\n  s += dimV(-PZ, PZ, -W / 2 - 8, -PX, N(PZ * 2));\n  s += leader(PX + 4, PZ + 4, PX + 12, PZ + 12, 'post Ø8, pocket Ø5.2 × 2');\n  s += leader(-W / 2 + 1.9, D / 2 - 1.9, -W / 2 - 10, D / 2 + 7, 'R6.5');\n  view('v-cover', W, D, 18, s);\n}\n\n/* ============ cover section, true scale ============ */\n{\n  const h = TOP_T + SLOT, P = p => -h / 2 + p;   /* p measured down from the cover's outer face */\n  let s = rr(-W / 2, P(0), W, TOP_T, 0, 'fill');\n  [-1, 1].forEach(sx => {\n    s += rr(sx * PX - 4, P(TOP_T), 8, SLOT, 0, 'fill');\n    s += rr(sx * PX - MAG_D / 2, P(h - MAG_H), MAG_D, MAG_H, 0, 'in');\n  });\n  s += dimV(P(0), P(h), -W / 2 - 7, -PX, N(h));\n  s += dimV(P(0), P(TOP_T), W / 2 + 7, W / 2, N(TOP_T));\n  s += dimV(P(h - MAG_H), P(h), W / 2 + 14, PX, N(MAG_H));\n  s += dimH(-PX, PX, P(h) + 8, P(h), N(PX * 2));\n  s += leader(-PX, P(h) - 1, -PX - 14, P(h) + 5, 'magnet face, meets the shell post');\n  s += leader(0, P(1.2), 10, P(0) - 5, 'plate 2.5');\n  s += tx(0, P(h) + 14, 'posts stand 3.5 clear of the plate — this is the shadow gap', 'lbl');\n  view('v-coversec', W, TOP_T + SLOT, 24, s);\n}\n\n/* ============ tables ============ */\n{\n  let r = '<table><thead><tr><th>Opening<\u002Fth><th>Centre x from box centre<\u002Fth><th>Cut width<\u002Fth><th>Cut height above shell floor<\u002Fth><\u002Ftr><\u002Fthead><tbody>';\n  ports.forEach(([n, c, w, ph, clt]) => {\n    const b = (PCB_TOP - CL) - FLOOR, t = (PCB_TOP + ph + clt) - FLOOR;\n    r += `<tr><td>${n}<\u002Ftd><td>${N(c)}<\u002Ftd><td>${N(w + 2 * CL)}<\u002Ftd><td>${N(b)} to ${N(t)}<\u002Ftd><\u002Ftr>`;\n  });\n  r += '<\u002Ftbody><\u002Ftable>';\n  document.getElementById('t-ports').innerHTML = r;\n\n  document.getElementById('t-base').innerHTML =\n    '<table><thead><tr><th>Feature<\u002Fth><th>Size<\u002Fth><th>Depth<\u002Fth><\u002Ftr><\u002Fthead><tbody>' +\n    '<tr><td>Screw counterbore<\u002Ftd><td>Ø6.2<\u002Ftd><td>1.5 from underside<\u002Ftd><\u002Ftr>' +\n    '<tr><td>Screw through hole<\u002Ftd><td>Ø3.4<\u002Ftd><td>full<\u002Ftd><\u002Ftr>' +\n    '<tr><td>Mounting magnet pocket<\u002Ftd><td>Ø10.4<\u002Ftd><td>2.0 from underside<\u002Ftd><\u002Ftr>' +\n    '<tr><td>Standoff bores<\u002Ftd><td>Ø2.8<\u002Ftd><td>full<\u002Ftd><\u002Ftr>' +\n    '<\u002Ftbody><\u002Ftable>';\n}\n<\u002Fscript>\n\n\n<\u002Fbody><\u002Fhtml>"
+  </script>
+</body>
+</html>

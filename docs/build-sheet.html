@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mallow enclosure rev D — build sheet</title>
+<style>
+  doc-page:not(:defined){visibility:hidden}
+  body{font-family:ui-sans-serif,system-ui,"Helvetica Neue",sans-serif;color:#23262a}
+  h1{font-size:19pt;margin:0 0 2pt;letter-spacing:-.01em}
+  .sub{font-size:9.5pt;color:#6a7079;margin:0 0 16pt}
+  h2{font-size:10pt;text-transform:uppercase;letter-spacing:.08em;color:#6a7079;
+     margin:16pt 0 6pt;padding-bottom:3pt;border-bottom:.75pt solid #d8d3c8}
+  p,li,td,th{font-size:9.5pt;line-height:1.45}
+  table{width:100%;border-collapse:collapse;margin:0 0 4pt}
+  th{text-align:left;font-size:8pt;text-transform:uppercase;letter-spacing:.06em;
+     color:#6a7079;font-weight:600;padding:0 6pt 3pt 0;border-bottom:.75pt solid #d8d3c8}
+  td{padding:3pt 6pt 3pt 0;border-bottom:.5pt solid #eae5da;vertical-align:top}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18pt}
+  .fig{display:block;width:100%;border:.75pt solid #d8d3c8;background:#eeebe5}
+  .cap{font-size:8pt;color:#6a7079;margin:4pt 0 0}
+  ol{margin:0;padding-left:16pt}
+  ol li{margin-bottom:4pt}
+  .note{font-size:8.5pt;color:#6a7079;border-left:2pt solid #d8d3c8;padding-left:8pt;margin:8pt 0 0}
+  .kv{font-size:9.5pt;margin:0 0 3pt}
+  .kv b{display:inline-block;min-width:96pt;font-weight:600}
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#2f4f7d">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#2f4f7d"/>
+    <g fill="none" stroke="#eeebe5" stroke-width="14">
+      <rect x="380" y="230" width="440" height="340" rx="12"/>
+      <path d="M430 300h180M430 350h340M430 400h340M430 450h260M430 500h300"/>
+    </g>
+  </svg>
+</template>
+
+<doc-page size="a4" margin="14mm">
+
+  <h1>Mallow enclosure — rev D</h1>
+  <p class="sub">Three printed parts for the Toradex Mallow V1.1 carrier board. 119 × 78 × 38 mm.</p>
+
+  <div class="two">
+    <div>
+      <h2>Parts</h2>
+      <p class="kv"><b>Shell</b>119 × 78 × 29.5 mm</p>
+      <p class="kv"><b>Base plate</b>119 × 78 × 2.5 mm</p>
+      <p class="kv"><b>Top cover</b>119 × 78 × 2.5 mm</p>
+      <h2>Print</h2>
+      <p class="kv"><b>Orientation</b>all three base down</p>
+      <p class="kv"><b>Walls</b>2.5 mm (rear panel 1.5)</p>
+      <p class="kv"><b>Supports</b>none needed</p>
+      <p class="kv"><b>Bridging</b>front windows, rear openings</p>
+      <p class="note">The four front windows and the five rear openings bridge across their tops. If your first layer over them sags, print the shell rear-panel-down instead and add supports under the corner posts.</p>
+    </div>
+    <div>
+      <img class="fig" src="shots/exploded.png" alt="Exploded view: cover lifted off the shell, board inside, base plate below">
+      <p class="cap">Cover, shell, board, base plate. The cover floats on four magnets; the base plate takes four M3 up into the corner posts. Dimensioned views of each part are on the separate drawing sheet.</p>
+    </div>
+  </div>
+
+  <h2>Assembly order</h2>
+  <ol>
+    <li>Glue four 5 × 2 mm magnets into the corner posts of the shell, faces flush with the wall top. Glue the other four into the cover posts — test each pair with a spare disc before the glue sets, so the polarity pulls rather than pushes.</li>
+    <li>Screw the shell to the base plate: four M3 × 8 self-tappers up through the counterbored holes into the posts.</li>
+    <li>Drop the board in from the top. It sits on the four standoffs; the rear connectors line up with the panel openings.</li>
+    <li>Four M3 × 6 down through the board's Ø3.2 holes into the standoffs.</li>
+    <li>Optional: glue four 10 × 2 mm discs into the pockets in the base underside if you want the box to stick to steel.</li>
+    <li>Set the cover on. It floats 3.5 mm above the wall and is held by the magnets alone.</li>
+  </ol>
+
+  <h2>Hardware</h2>
+  <table>
+    <thead><tr><th>Item</th><th>Qty</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td>M3 × 8 self-tapping, countersunk or pan</td><td class="n">4</td><td>Base plate into the corner posts, Ø2.8 pilot</td></tr>
+      <tr><td>M3 × 6 self-tapping</td><td class="n">4</td><td>Board into the standoffs, Ø2.8 pilot</td></tr>
+      <tr><td>Neodymium disc 5 × 2 mm</td><td class="n">8</td><td>Four in the shell posts, four in the cover posts</td></tr>
+      <tr><td>Neodymium disc 10 × 2 mm</td><td class="n">4</td><td>Optional, base underside pockets</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Board dimensions this design was cut from</h2>
+  <p class="sub" style="margin:0 0 6pt">Mallow V1.1 datasheet, section 4.1. Distances are from the board edge named in the column; check these against your copy before printing the set.</p>
+  <table>
+    <thead><tr><th>Feature</th><th>Position</th><th>Size</th><th>Height above PCB</th></tr></thead>
+    <tbody>
+      <tr><td>Board outline</td><td class="n">—</td><td class="n">100 × 72 × 1.6 mm</td><td class="n">—</td></tr>
+      <tr><td>Mounting holes Ø3.2</td><td class="n">3 mm in from each edge</td><td class="n">4 off</td><td class="n">—</td></tr>
+      <tr><td>RJ45</td><td class="n">14.20 from left</td><td class="n">15.74 wide</td><td class="n">13.80</td></tr>
+      <tr><td>USB-A stack</td><td class="n">31.60 from left</td><td class="n">14.30 wide</td><td class="n">16.12</td></tr>
+      <tr><td>USB-C</td><td class="n">48.99 from left</td><td class="n">8.92 wide</td><td class="n">3.27</td></tr>
+      <tr><td>HDMI</td><td class="n">65.79 from left</td><td class="n">15.00 wide</td><td class="n">6.28</td></tr>
+      <tr><td>Power terminal</td><td class="n">85.29 from left</td><td class="n">17.30 wide</td><td class="n">7.00</td></tr>
+      <tr><td>Switch 1 / Switch 2 (front edge)</td><td class="n">9 and 23 from right</td><td class="n">Ø4 windows</td><td class="n">3.30</td></tr>
+      <tr><td>LEDs (front edge)</td><td class="n">14 and 18 from right</td><td class="n">Ø2 windows</td><td class="n">1.70</td></tr>
+      <tr><td>Bottom-side height</td><td class="n">—</td><td class="n">—</td><td class="n">8.52 below PCB</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Fits to check on the coupon first</h2>
+  <table>
+    <thead><tr><th>Feature</th><th>Nominal</th><th>Clearance</th></tr></thead>
+    <tbody>
+      <tr><td>Board pocket</td><td class="n">102 × 74 mm</td><td class="n">1 mm per side</td></tr>
+      <tr><td>Rear openings</td><td class="n">connector body</td><td class="n">+0.6 mm all round</td></tr>
+      <tr><td>Magnet pockets</td><td class="n">Ø5.2 × 2 mm</td><td class="n">glued</td></tr>
+      <tr><td>M3 pilot bores</td><td class="n">Ø2.8</td><td class="n">self-tapping</td></tr>
+      <tr><td>Board rear edge to panel</td><td class="n">—</td><td class="n">0.3 mm</td></tr>
+      <tr><td>Corner post to board edge</td><td class="n">—</td><td class="n">0.75 mm</td></tr>
+    </tbody>
+  </table>
+
+  <p class="note">Connector faces relative to the rear surface: USB-C 0.3 mm in, HDMI 0.8 mm in, USB-A 1.8 mm in, RJ45 and power 0.7 mm proud. The panel is 1.5 mm thick so the PCB edge stays hidden.</p>
+
+  <script src="doc-page.js"></script>
+</doc-page>
+</body>
+</html>

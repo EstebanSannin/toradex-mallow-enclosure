@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mallow enclosure rev D — drawings</title>
+<style>
+  doc-page:not(:defined){visibility:hidden}
+  body{font-family:ui-sans-serif,system-ui,"Helvetica Neue",sans-serif;color:#23262a}
+  .page{padding:11mm 12mm;box-sizing:border-box;display:flex;flex-direction:column}
+  .head{display:flex;justify-content:space-between;align-items:baseline;
+        border-bottom:.5pt solid #c9c2b4;padding-bottom:3mm;margin-bottom:4mm}
+  .head h1{font-size:13pt;margin:0;letter-spacing:-.01em}
+  .head .meta{font-size:8pt;color:#6a7079;text-align:right;line-height:1.4}
+  .grid{display:flex;gap:6mm;align-items:flex-start;flex-wrap:nowrap}
+  .col{display:flex;flex-direction:column;gap:5mm}
+  .vt{font-size:7.5pt;text-transform:uppercase;letter-spacing:.07em;color:#6a7079;margin:0 0 1mm}
+  svg{display:block;overflow:visible}
+  .out{fill:none;stroke:#23262a;stroke-width:.35}
+  .in{fill:none;stroke:#23262a;stroke-width:.25}
+  .hid{fill:none;stroke:#9aa0a6;stroke-width:.2;stroke-dasharray:2 1.2}
+  .ctr{fill:none;stroke:#b9a24a;stroke-width:.15;stroke-dasharray:4 1 1 1}
+  .fill{fill:#e8e4dc;stroke:#23262a;stroke-width:.3}
+  .dim{fill:none;stroke:#4a6fa5;stroke-width:.16}
+  .dt{fill:#2f4f7d;font-size:3.4px;font-family:ui-sans-serif,system-ui,sans-serif}
+  .lbl{fill:#23262a;font-size:3.5px;font-family:ui-sans-serif,system-ui,sans-serif}
+  .note{font-size:7.5pt;color:#6a7079;line-height:1.45;margin:3mm 0 0}
+  table{border-collapse:collapse;font-size:7.5pt;margin-top:2mm}
+  th,td{text-align:left;padding:1mm 3mm 1mm 0;border-bottom:.4pt solid #eae5da;white-space:nowrap}
+  th{color:#6a7079;font-size:7pt;text-transform:uppercase;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#2f4f7d">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#2f4f7d"/>
+    <g fill="none" stroke="#eeebe5" stroke-width="12">
+      <rect x="380" y="280" width="440" height="240" rx="26"/>
+      <path d="M380 240h440M380 226v28M820 226v28" stroke-width="8"/>
+      <circle cx="450" cy="350" r="22"/><circle cx="750" cy="350" r="22"/>
+      <circle cx="450" cy="450" r="22"/><circle cx="750" cy="450" r="22"/>
+    </g>
+  </svg>
+</template>
+
+<doc-page size="a4" orientation="landscape">
+  <section class="page" id="p1">
+    <div class="head">
+      <h1>Shell — plan and rear elevation</h1>
+      <div class="meta">Mallow enclosure rev D · 0.65:1 at A4 · dimensions govern · mm<br>PETG, 2.5 mm wall unless noted</div>
+    </div>
+    <div class="grid">
+      <div class="col"><p class="vt">Plan, seen from above (rear at top)</p><div id="v-plan"></div></div>
+      <div class="col">
+        <p class="vt">Rear elevation, from outside</p><div id="v-rear"></div>
+        <p class="vt">Section A–A through a corner post, true scale</p><div id="v-sec"></div>
+      </div>
+    </div>
+    <p class="note">Heights on the shell are measured from its own bottom face, which sits on the base plate. Cavity 114 × 74 mm with a 4 mm inner corner radius; the board pocket shown dashed is 100 × 72 with the rear edge 0.3 mm off the panel.</p>
+  </section>
+
+  <section class="page" id="p2">
+    <div class="head">
+      <h1>Shell — front elevation and openings</h1>
+      <div class="meta">Mallow enclosure rev D · 0.65:1 at A4 · dimensions govern · mm<br>All openings include clearance</div>
+    </div>
+    <div class="grid">
+      <div class="col"><p class="vt">Front elevation, from outside</p><div id="v-front"></div>
+        <p class="vt">Rear openings — cut sizes</p><div id="t-ports"></div></div>
+    </div>
+  </section>
+
+  <section class="page" id="p3">
+    <div class="head">
+      <h1>Base plate</h1>
+      <div class="meta">Mallow enclosure rev D · 0.65:1 at A4 · dimensions govern · mm<br>PETG, 2.5 mm plate</div>
+    </div>
+    <div class="grid">
+      <div class="col"><p class="vt">Plan, seen from above (rear at top)</p><div id="v-base"></div></div>
+      <div class="col">
+        <p class="vt">Section B–B, true scale</p><div id="v-basesec"></div>
+        <p class="vt">Underside features</p><div id="t-base"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="p4">
+    <div class="head">
+      <h1>Top cover</h1>
+      <div class="meta">Mallow enclosure rev D · 0.65:1 at A4 · dimensions govern · mm<br>PETG, 2.5 mm plate + four posts</div>
+    </div>
+    <div class="grid">
+      <div class="col"><p class="vt">Underside, seen from below (rear at top)</p><div id="v-cover"></div></div>
+      <div class="col">
+        <p class="vt">Section C–C through two posts, true scale</p><div id="v-coversec"></div>
+        <p class="note" style="max-width:80mm">The cover carries no fasteners. It rests on the four post faces and is held by four 5 × 2 mm magnets glued into the pockets, meeting their pairs in the shell posts. Set the polarity by test before the glue sets.</p>
+      </div>
+    </div>
+  </section>
+<script src="doc-page.js"></script>
+</doc-page>
+<script>
+/* ---- every number below is the rev D model ---- */
+const W = 119, D = 78, R = 6.5, T = 2.5, TR = 1.5;
+const FLOOR = 2.5, STANDOFF = 10, PCB_T = 1.6;
+const PCB_Y = FLOOR + STANDOFF, PCB_TOP = PCB_Y + PCB_T;
+const WALL_TOP = 32, TOP_T = 2.5, SLOT = 3.5;
+const SH = WALL_TOP - FLOOR;                    /* shell height, part local */
+const IX = W / 2 - T, IZ = D / 2 - T, RI = R - T;
+const PX = 54.75, PZ = 32, GAP = 51;
+const BZ = 1.2, HX = 47, HZ = 33, PCB_W = 100, PCB_D = 72;
+const MNTX = 42, MNTZ = 22, MAG_D = 5.2, MAG_H = 2;
+const CL = 0.6;
+const ports = [
+  ['Power X5', -35.29, 17.30, 7.00, 0.6],
+  ['HDMI X14', -15.79, 15.00, 6.28, 0.6],
+  ['USB-C X8', 1.01, 8.92, 3.27, 0.6],
+  ['USB-A stack X9', 18.40, 14.30, 16.12, 0.4],
+  ['RJ45 X2', 35.80, 15.74, 13.80, 0.6]
+];
+const SWX = [-41, -27], LEDX = [-36, -32];
+
+const N = v => (Math.round(v * 100) / 100).toString();
+let out = '';
+const el = s => `<g>${s}</g>`;
+function rr(x, y, w, h, r, cls) {
+  return `<rect class="${cls}" x="${N(x)}" y="${N(y)}" width="${N(w)}" height="${N(h)}" rx="${N(r)}" ry="${N(r)}"/>`;
+}
+const ln = (x1, y1, x2, y2, cls) =>
+  `<line class="${cls}" x1="${N(x1)}" y1="${N(y1)}" x2="${N(x2)}" y2="${N(y2)}"/>`;
+const ci = (cx, cy, d, cls) => `<circle class="${cls}" cx="${N(cx)}" cy="${N(cy)}" r="${N(d / 2)}"/>`;
+const tx = (x, y, s, cls = 'dt', anchor = 'middle') =>
+  `<text class="${cls}" x="${N(x)}" y="${N(y)}" text-anchor="${anchor}">${s}</text>`;
+function tick(x, y, dx, dy) { return ln(x - dx, y - dy, x + dx, y + dy, 'dim'); }
+/* horizontal dimension between x1 and x2, dim line at y, features at fy */
+function dimH(x1, x2, y, fy, label) {
+  let s = ln(x1, fy, x1, y + (y > fy ? 1.6 : -1.6), 'dim') + ln(x2, fy, x2, y + (y > fy ? 1.6 : -1.6), 'dim');
+  s += ln(x1, y, x2, y, 'dim') + tick(x1, y, 0, 1) + tick(x2, y, 0, 1);
+  s += tx((x1 + x2) / 2, y - 1.1, label ?? N(Math.abs(x2 - x1)));
+  return s;
+}
+function dimV(y1, y2, x, fx, label) {
+  let s = ln(fx, y1, x + (x > fx ? 1.6 : -1.6), y1, 'dim') + ln(fx, y2, x + (x > fx ? 1.6 : -1.6), y2, 'dim');
+  s += ln(x, y1, x, y2, 'dim') + tick(x, y1, 1, 0) + tick(x, y2, 1, 0);
+  s += `<text class="dt" x="${N(x - 1.1)}" y="${N((y1 + y2) / 2)}" text-anchor="middle" transform="rotate(-90 ${N(x - 1.1)} ${N((y1 + y2) / 2)})">${label ?? N(Math.abs(y2 - y1))}</text>`;
+  return s;
+}
+const leader = (x, y, tox, toy, label) =>
+  ln(x, y, tox, toy, 'dim') + tx(tox + (tox > x ? 1 : -1), toy + 0.9, label, 'dt', tox > x ? 'start' : 'end');
+
+const F = 0.65;                                 /* fit the views onto A4 landscape */
+function view(id, w, h, pad, inner) {
+  document.getElementById(id).innerHTML =
+    `<svg viewBox="${N(-w / 2 - pad)} ${N(-h / 2 - pad)} ${N(w + 2 * pad)} ${N(h + 2 * pad)}" style="width:${N((w + 2 * pad) * F)}mm">${inner}</svg>`;
+}
+
+/* ============ shell plan ============ */
+{
+  let s = rr(-W / 2, -D / 2, W, D, R, 'out');
+  /* cavity: rear inner face 1.5 in, others 2.5 */
+  s += `<path class="in" d="M ${N(-IX)} ${N(-(D / 2 - TR))} L ${N(IX)} ${N(-(D / 2 - TR))} L ${N(IX)} ${N(IZ - RI)} A ${N(RI)} ${N(RI)} 0 0 1 ${N(IX - RI)} ${N(IZ)} L ${N(-IX + RI)} ${N(IZ)} A ${N(RI)} ${N(RI)} 0 0 1 ${N(-IX)} ${N(IZ - RI)} Z"/>`;
+  /* board pocket, dashed: rear edge 0.3 off the panel */
+  const bz0 = -(D / 2 - TR - 0.3), bz1 = bz0 + PCB_D;
+  s += rr(-PCB_W / 2, bz0, PCB_W, PCB_D, 4, 'hid');
+  /* corner posts */
+  [-1, 1].forEach(sx => [-1, 1].forEach(sz => {
+    s += ci(sx * PX, -sz * PZ, 8, 'fill') + ci(sx * PX, -sz * PZ, 2.8, 'in');
+    s += ln(sx * PX - 5.5, -sz * PZ, sx * PX + 5.5, -sz * PZ, 'ctr');
+    s += ln(sx * PX, -sz * PZ - 5.5, sx * PX, -sz * PZ + 5.5, 'ctr');
+  }));
+  s += dimH(-W / 2, W / 2, -D / 2 - 14, -D / 2, N(W));
+  s += dimH(-PX, PX, -D / 2 - 8, -PZ, N(PX * 2));
+  s += dimV(-D / 2, D / 2, -W / 2 - 14, -W / 2, N(D));
+  s += dimV(-PZ, PZ, -W / 2 - 8, -PX, N(PZ * 2));
+  s += dimV(bz0, bz1, W / 2 + 8, PCB_W / 2, N(PCB_D));
+  s += dimH(-PCB_W / 2, PCB_W / 2, D / 2 + 8, D / 2, N(PCB_W));
+  s += leader(PX + 4, -PZ - 4, PX + 13, -PZ - 11, 'Ø8, bore Ø2.8');
+  s += leader(-W / 2 + 1.9, -D / 2 + 1.9, -W / 2 - 11, -D / 2 - 7, 'R6.5');
+  s += leader(-IX, 0, -IX - 9, 6, 'wall 2.5');
+  s += leader(0, -(D / 2 - TR / 2), 8, -D / 2 - 7, 'rear panel 1.5');
+  view('v-plan', W, D, 17, s);
+}
+
+/* ============ shell rear elevation ============ */
+{
+  const h = SH;
+  let s = rr(-W / 2, -h / 2, W, h, 0, 'out');
+  s += ln(-W / 2, h / 2 - (PCB_Y - FLOOR), W / 2, h / 2 - (PCB_Y - FLOOR), 'hid');
+  ports.forEach(([, c, w, ph, clt]) => {
+    const b = (PCB_TOP - CL) - FLOOR, t = (PCB_TOP + ph + clt) - FLOOR;
+    s += rr(c - w / 2 - CL, h / 2 - t, w + 2 * CL, t - b, 0.8, 'in');
+  });
+  s += dimH(-W / 2, W / 2, -h / 2 - 16, -h / 2, N(W));
+  let y = -h / 2 - 4;
+  ports.forEach(([, c, w], i) => {
+    s += dimH(-W / 2, c, y - (i % 3) * 5, h / 2 - ((PCB_TOP + 3) - FLOOR), N(c + W / 2));
+  });
+  ports.forEach(([, c, w, ph, clt]) => {
+    const t = (PCB_TOP + ph + clt) - FLOOR, b = (PCB_TOP - CL) - FLOOR;
+    s += dimH(c - w / 2 - CL, c + w / 2 + CL, h / 2 - t - 3, h / 2 - t, N(w + 2 * CL));
+  });
+  s += dimV(h / 2 - ((PCB_TOP - CL) - FLOOR), h / 2, W / 2 + 6, W / 2, N((PCB_TOP - CL) - FLOOR));
+  s += dimV(-h / 2, h / 2, W / 2 + 14, W / 2, N(h));
+  s += tx(0, h / 2 + 9, "centres measured from the box's left edge", 'lbl');
+  view('v-rear', W, SH, 20, s);
+}
+
+/* ============ shell section through a corner post, true scale ============ */
+{
+  const h = SH, x0 = 46, x1 = W / 2;            /* real x range shown */
+  const w = x1 - x0, L = v => v - (x0 + x1) / 2; /* world x -> local */
+  const P = p => h / 2 - p;                      /* part height -> local y */
+  let s = '';
+  s += rr(L(IX), -h / 2, T, h, 0, 'fill');                       /* wall */
+  s += rr(L(PX - 4), -h / 2, 8, h, 0, 'fill');                    /* post, fused to the wall */
+  s += rr(L(PX - 1.4), P(27.5), 2.8, 27.5, 0, 'in');              /* M3 bore, open at the bottom */
+  s += rr(L(PX - MAG_D / 2), P(SH), MAG_D, MAG_H, 0, 'in');       /* magnet pocket in the top */
+  s += dimV(-h / 2, h / 2, L(x1) + 7, L(x1), N(h));
+  s += dimV(P(SH), P(SH - MAG_H), L(x0) - 5, L(PX - MAG_D / 2), N(MAG_H));
+  s += dimH(L(PX - 4), L(PX + 4), P(SH) - 7, P(SH), 'Ø8');
+  s += leader(L(PX), P(14), L(x0) - 3, P(20), 'bore Ø2.8, open at the bottom');
+  s += leader(L(IX + T / 2), P(8), L(x1) + 3, P(4), 'wall 2.5');
+  s += leader(L(PX), P(SH) + 1, L(x1) + 3, P(SH) - 4, 'Ø5.2 × 2 pocket');
+  view('v-sec', w, SH, 30, s);
+}
+
+/* ============ shell front elevation ============ */
+{
+  const h = SH;
+  let s = rr(-W / 2, -h / 2, W, h, 0, 'out');
+  s += ln(-W / 2, h / 2 - (PCB_Y - FLOOR), W / 2, h / 2 - (PCB_Y - FLOOR), 'hid');
+  /* front seen from outside: x mirrored */
+  SWX.forEach(x => { s += ci(-x, h / 2 - (PCB_TOP + 1.65 - FLOOR), 4, 'in'); });
+  LEDX.forEach(x => { s += ci(-x, h / 2 - (PCB_TOP + 0.85 - FLOOR), 2, 'in'); });
+  s += dimH(-W / 2, W / 2, -h / 2 - 16, -h / 2, N(W));
+  s += dimV(-h / 2, h / 2, -W / 2 - 8, -W / 2, N(h));
+  s += ln(50, -h / 2 - 2, 50, h / 2 + 4, 'hid');
+  s += tx(50, h / 2 + 7, "board's right edge", 'lbl');
+  SWX.concat(LEDX).forEach((x, i) => {
+    const rx = -x, fy = h / 2 - ((i < 2 ? PCB_TOP + 1.65 : PCB_TOP + 0.85) - FLOOR);
+    s += dimH(50, rx, -h / 2 - 4 - (i % 2) * 4, fy, N(50 - rx));
+  });
+  s += dimV(h / 2 - (PCB_TOP + 1.65 - FLOOR), h / 2, W / 2 + 6, W / 2, N(PCB_TOP + 1.65 - FLOOR));
+  s += leader(-SWX[0], h / 2 - (PCB_TOP + 1.65 - FLOOR) - 2, -SWX[0] - 10, -h / 2 + 6, 'Ø4 switch');
+  s += leader(-LEDX[0], h / 2 - (PCB_TOP + 0.85 - FLOOR) - 1, -LEDX[0] + 10, -h / 2 + 10, 'Ø2 LED');
+  view('v-front', W, SH, 22, s);
+}
+
+/* ============ base plate plan ============ */
+{
+  let s = rr(-W / 2, -D / 2, W, D, R, 'out');
+  [-1, 1].forEach(sx => {
+    /* rear standoff Ø6, front standoff Ø7 */
+    s += ci(sx * HX, -(BZ + HZ), 6, 'fill') + ci(sx * HX, -(BZ + HZ), 2.8, 'in');
+    s += ci(sx * HX, -(BZ - HZ), 7, 'fill') + ci(sx * HX, -(BZ - HZ), 2.8, 'in');
+    [-1, 1].forEach(sz => {
+      s += ci(sx * PX, -sz * PZ, 3.4, 'in') + ci(sx * PX, -sz * PZ, 6.2, 'hid');
+      s += ci(sx * MNTX, -sz * MNTZ, 10.4, 'hid');
+    });
+  });
+  s += dimH(-W / 2, W / 2, -D / 2 - 14, -D / 2, N(W));
+  s += dimV(-D / 2, D / 2, -W / 2 - 14, -W / 2, N(D));
+  s += dimH(-HX, HX, -D / 2 - 8, -(BZ + HZ), N(HX * 2));
+  s += dimV(-(BZ + HZ), -(BZ - HZ), -W / 2 - 8, -HX, N(HZ * 2));
+  s += dimH(-PX, PX, D / 2 + 8, PZ, N(PX * 2));
+  s += dimV(-PZ, PZ, W / 2 + 8, PX, N(PZ * 2));
+  s += dimH(-MNTX, MNTX, D / 2 + 14, MNTZ, N(MNTX * 2));
+  s += dimV(-MNTZ, MNTZ, W / 2 + 14, MNTX, N(MNTZ * 2));
+  s += leader(HX + 3, -(BZ + HZ) - 1, HX - 2, -(BZ + HZ) + 13, 'Ø6 standoff, bore Ø2.8');
+  s += leader(-HX - 3.5, -(BZ - HZ), -HX + 12, -(BZ - HZ) - 4, 'Ø7 standoff, bore Ø2.8');
+  s += leader(PX, PZ + 3.2, PX - 14, PZ - 8, 'Ø3.4 through, Ø6.2 c-bore 1.5 deep');
+  s += leader(-MNTX, MNTZ + 5.2, -MNTX + 2, MNTZ - 12, 'Ø10.4 pocket, 2 deep');
+  view('v-base', W, D, 19, s);
+}
+
+/* ============ base plate section, true scale ============ */
+{
+  const h = FLOOR + STANDOFF, P = p => h / 2 - p;
+  let s = rr(-W / 2, P(FLOOR), W, FLOOR, 0, 'fill');
+  [-1, 1].forEach(sx => {
+    const d = sx < 0 ? 7 : 6;
+    s += rr(sx * HX - d / 2, P(h), d, STANDOFF, 0, 'fill');
+    s += rr(sx * HX - 1.4, P(h), 2.8, STANDOFF, 0, 'in');
+    s += rr(sx * PX - 1.7, P(FLOOR), 3.4, FLOOR, 0, 'in');
+    s += rr(sx * PX - 3.1, P(1.5), 6.2, 1.5, 0, 'in');
+    s += rr(sx * MNTX - 10.4 / 2, P(2), 10.4, 2, 0, 'in');
+  });
+  s += dimV(P(h), P(0), -W / 2 - 7, -HX, N(h));
+  s += dimV(P(FLOOR), P(0), W / 2 + 7, W / 2, N(FLOOR));
+  s += leader(-HX, P(h) + 3, -HX - 16, P(h) - 5, 'Ø7 standoff, front pair');
+  s += leader(HX, P(h) + 3, HX + 14, P(h) - 5, 'Ø6 standoff, rear pair');
+  s += leader(-MNTX, P(1), -MNTX - 8, P(0) + 7, 'Ø10.4 × 2, open at the underside');
+  s += leader(PX, P(0.7), PX + 6, P(0) + 7, 'Ø6.2 c-bore 1.5 deep');
+  s += tx(0, P(h) - 12, 'standoff tops are the board underside, 12.5 above the base', 'lbl');
+  view('v-basesec', W, FLOOR + STANDOFF, 24, s);
+}
+
+/* ============ cover underside ============ */
+{
+  let s = rr(-W / 2, -D / 2, W, D, R, 'out');
+  [-1, 1].forEach(sx => [-1, 1].forEach(sz => {
+    s += ci(sx * PX, -sz * PZ, 8, 'fill') + ci(sx * PX, -sz * PZ, MAG_D, 'in');
+  }));
+  s += dimH(-W / 2, W / 2, -D / 2 - 14, -D / 2, N(W));
+  s += dimV(-D / 2, D / 2, -W / 2 - 14, -W / 2, N(D));
+  s += dimH(-PX, PX, -D / 2 - 8, -PZ, N(PX * 2));
+  s += dimV(-PZ, PZ, -W / 2 - 8, -PX, N(PZ * 2));
+  s += leader(PX + 4, PZ + 4, PX + 12, PZ + 12, 'post Ø8, pocket Ø5.2 × 2');
+  s += leader(-W / 2 + 1.9, D / 2 - 1.9, -W / 2 - 10, D / 2 + 7, 'R6.5');
+  view('v-cover', W, D, 18, s);
+}
+
+/* ============ cover section, true scale ============ */
+{
+  const h = TOP_T + SLOT, P = p => -h / 2 + p;   /* p measured down from the cover's outer face */
+  let s = rr(-W / 2, P(0), W, TOP_T, 0, 'fill');
+  [-1, 1].forEach(sx => {
+    s += rr(sx * PX - 4, P(TOP_T), 8, SLOT, 0, 'fill');
+    s += rr(sx * PX - MAG_D / 2, P(h - MAG_H), MAG_D, MAG_H, 0, 'in');
+  });
+  s += dimV(P(0), P(h), -W / 2 - 7, -PX, N(h));
+  s += dimV(P(0), P(TOP_T), W / 2 + 7, W / 2, N(TOP_T));
+  s += dimV(P(h - MAG_H), P(h), W / 2 + 14, PX, N(MAG_H));
+  s += dimH(-PX, PX, P(h) + 8, P(h), N(PX * 2));
+  s += leader(-PX, P(h) - 1, -PX - 14, P(h) + 5, 'magnet face, meets the shell post');
+  s += leader(0, P(1.2), 10, P(0) - 5, 'plate 2.5');
+  s += tx(0, P(h) + 14, 'posts stand 3.5 clear of the plate — this is the shadow gap', 'lbl');
+  view('v-coversec', W, TOP_T + SLOT, 24, s);
+}
+
+/* ============ tables ============ */
+{
+  let r = '<table><thead><tr><th>Opening</th><th>Centre x from box centre</th><th>Cut width</th><th>Cut height above shell floor</th></tr></thead><tbody>';
+  ports.forEach(([n, c, w, ph, clt]) => {
+    const b = (PCB_TOP - CL) - FLOOR, t = (PCB_TOP + ph + clt) - FLOOR;
+    r += `<tr><td>${n}</td><td>${N(c)}</td><td>${N(w + 2 * CL)}</td><td>${N(b)} to ${N(t)}</td></tr>`;
+  });
+  r += '</tbody></table>';
+  document.getElementById('t-ports').innerHTML = r;
+
+  document.getElementById('t-base').innerHTML =
+    '<table><thead><tr><th>Feature</th><th>Size</th><th>Depth</th></tr></thead><tbody>' +
+    '<tr><td>Screw counterbore</td><td>Ø6.2</td><td>1.5 from underside</td></tr>' +
+    '<tr><td>Screw through hole</td><td>Ø3.4</td><td>full</td></tr>' +
+    '<tr><td>Mounting magnet pocket</td><td>Ø10.4</td><td>2.0 from underside</td></tr>' +
+    '<tr><td>Standoff bores</td><td>Ø2.8</td><td>full</td></tr>' +
+    '</tbody></table>';
+}
+</script>
+</body>
+</html>

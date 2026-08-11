@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mallow enclosure — rev D</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  html,body{margin:0;height:100%;background:#eeebe5;font-family:ui-sans-serif,system-ui,"Helvetica Neue",sans-serif}
+  three-d-stage:not(:defined){visibility:hidden}
+  three-d-stage{display:block;width:100vw;height:100vh}
+  .legend{position:fixed;left:20px;top:20px;z-index:5;font-size:12px;line-height:1.55;color:#3a4048;
+          background:rgba(255,255,255,.85);border:1px solid #ddd7cc;border-radius:4px;padding:12px 14px;max-width:262px;
+          max-height:calc(100vh - 40px);overflow:auto}
+  .legend h1{margin:0 0 6px;font-size:13px;font-weight:650}
+  .legend p{margin:0 0 4px;color:#6a7079}
+  .legend b{font-weight:600;color:#3a4048}
+  .parts{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
+  .parts button{font:inherit;font-size:11px;padding:4px 8px;border:1px solid #c9c2b4;border-radius:3px;
+                background:#fff;color:#3a4048;cursor:pointer;white-space:nowrap}
+  .parts button:hover{border-color:#8a8577}
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#2b2e33">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#2b2e33"/>
+    <g fill="none" stroke="#eeebe5" stroke-width="14">
+      <rect x="360" y="300" width="480" height="240" rx="34"/>
+      <rect x="360" y="240" width="480" height="42" rx="18"/>
+      <circle cx="470" cy="420" r="26"/><circle cx="600" cy="420" r="26"/><circle cx="730" cy="420" r="26"/>
+    </g>
+  </svg>
+</template>
+
+<div class="legend">
+  <h1>Mallow enclosure — rev D</h1>
+  <p><b>119 × 78 × 38 mm</b>, 2.5 mm walls, 6.5 mm corner radius, square bottom edge.</p>
+  <p><b>Rear openings come from Figure 4 of the datasheet</b> — connector centres 14.20 / 31.60 / 48.99 / 65.79 / 85.29 mm from the board's left edge, widths 15.74 / 14.30 / 8.92 / 15.00 / 17.30, each with 0.6 mm clearance.</p>
+  <p>The rear panel is <b>1.5 mm thick and unbroken</b>, so the PCB edge and the bottom-side parts stay hidden. Its outer face sits level with the USB-C: RJ45 and power stand 0.7 mm proud, HDMI sits 0.8 mm in, USB-A 1.8 mm in.</p>
+  <p><b>Four solid corner posts</b> live in the 7 mm side gaps, clear of the board. Each takes an M3 from the base plate and carries a 5 × 2 mm magnet flush with the wall top, meeting its pair in the cover.</p>
+  <p>Board drops straight down onto <b>four standoffs on the base plate</b> at its own Ø3.2 holes — M3 from above, rear pair Ø6 to clear the panel.</p>
+  <p>Base plate: counterbored screw holes and four Ø10.4 pockets for 10 × 2 mm mounting magnets. M3 pilot bores are Ø2.8.</p>
+  <p><b>Front face, from Figure 4:</b> two Ø4 switch windows and two Ø2 LED windows at 9 / 14 / 18 / 23 mm from the board's right edge. Standoffs stay at 10 mm — Figure 7 gives 8.52 mm of bottom-side height.</p>
+  <p>Green board and heatsink are <b>reference only</b> — delete after import.</p>
+  <div class="parts">
+    <button data-part="all">Whole assembly</button>
+    <button data-part="base">Base plate</button>
+    <button data-part="shell">Shell</button>
+    <button data-part="cap">Top cover</button>
+  </div>
+  <div class="parts"><button id="explode">Explode</button><button id="frontface">Blank front</button></div>
+  <p style="margin-top:8px">Pick a part, then Download OBJ/GLB for that part alone. Screws and magnets are hardware.</p>
+</div>
+<three-d-stage name="mallow-enclosure" background="#eeebe5"></three-d-stage>
+<script src="three-d-stage.js"></script>
+<script type="module">
+const stage = document.querySelector('three-d-stage');
+const { THREE } = await stage.ready;
+const mm = v => v / 1000;
+
+/* ---- board, from the Mallow V1.1 datasheet section 4.1 ---- */
+const PCB_W = mm(100), PCB_D = mm(72), PCB_T = mm(1.6);
+const HX = mm(47), HZ = mm(33);                 // Ø3.2 mounting holes, 3 mm inset
+
+/* ---- shell ---- */
+const W = mm(119), D = mm(78), R = mm(6.5), T = mm(2.5), TR = mm(1.5);
+const FLOOR = mm(2.5), STANDOFF = mm(10);
+const BZ = mm(1.2);                             // board 0.3 mm off the rear panel's inner face
+const PCB_Y = FLOOR + STANDOFF, PCB_TOP = PCB_Y + PCB_T;
+const REAR_Y = mm(10);
+const WALL_TOP = mm(32), SLOT = mm(3.5), TOP_T = mm(2.5);
+const TOP_Y = WALL_TOP + SLOT;                  // underside of the floating cover — 38 mm overall
+const GAP = mm(51);                             // half-width of the rear cut-away
+const PX = mm(54.75), PZ = mm(32);              // corner posts, in the 7 mm side gaps
+const MAG_R = mm(2.6), MAG_H = mm(2);           // 5 × 2 mm neodymium disc
+const CORNERS = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+const IX = W / 2 - T, IZ = D / 2 - T;           // inner faces
+const CX = IX - (R - T), CZ = IZ - (R - T);     // corner arc centres
+
+const mats = {
+  shell: new THREE.MeshStandardMaterial({ name: 'petg_black',   color: 0x2b2e33, roughness: 0.55, metalness: 0.06 }),
+  base:  new THREE.MeshStandardMaterial({ name: 'petg_black_2', color: 0x22252a, roughness: 0.62, metalness: 0.06 }),
+  cover: new THREE.MeshStandardMaterial({ name: 'petg_black_3', color: 0x33373d, roughness: 0.50, metalness: 0.06 }),
+  pcb:   new THREE.MeshStandardMaterial({ name: 'pcb_green',    color: 0x1f5e3a, roughness: 0.55, metalness: 0.10 }),
+  metal: new THREE.MeshStandardMaterial({ name: 'heatsink',     color: 0xb2b6ba, roughness: 0.38, metalness: 0.35 }),
+  mag:   new THREE.MeshStandardMaterial({ name: 'magnet',       color: 0x9aa0a6, roughness: 0.30, metalness: 0.60 })
+};
+
+const root = new THREE.Group(); root.name = 'mallow_enclosure';
+const body = new THREE.Group(); body.name = 'enclosure';
+const ref  = new THREE.Group(); ref.name = 'reference_board_do_not_print';
+root.add(body, ref);
+
+function box(parent, name, mat, w, h, d, x, y, z) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.name = name; m.position.set(x, y + h / 2, z); parent.add(m); return m;
+}
+function prism(parent, name, mat, shape, h, y, holes = []) {
+  holes.forEach(p => shape.holes.push(p));
+  const g = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false, curveSegments: 24 });
+  g.rotateX(-Math.PI / 2);
+  const m = new THREE.Mesh(g, mat);
+  m.name = name; m.position.y = y; parent.add(m); return m;
+}
+function ring(ro, ri) {
+  const s = new THREE.Shape(); s.absarc(0, 0, ro, 0, Math.PI * 2, false);
+  const h = new THREE.Path(); h.absarc(0, 0, ri, 0, Math.PI * 2, true);
+  s.holes.push(h); return s;
+}
+/* rounded rectangle, traced clockwise in shape space (shape y = −world z) */
+function rrOutline(target, w, d, r, ox = 0, oy = 0) {
+  const x = w / 2 + ox, y = d / 2 + oy, nx = -w / 2 + ox, ny = -d / 2 + oy;
+  target.moveTo(nx + r, ny);
+  target.lineTo(x - r, ny); target.quadraticCurveTo(x, ny, x, ny + r);
+  target.lineTo(x, y - r);  target.quadraticCurveTo(x, y, x - r, y);
+  target.lineTo(nx + r, y); target.quadraticCurveTo(nx, y, nx, y - r);
+  target.lineTo(nx, ny + r);target.quadraticCurveTo(nx, ny, nx + r, ny);
+  target.closePath(); return target;
+}
+const rrShape = (w, d, r) => rrOutline(new THREE.Shape(), w, d, r);
+const rrPath  = (w, d, r, ox = 0, oy = 0) => rrOutline(new THREE.Path(), w, d, r, ox, oy);
+
+/* one side piece per side, each carrying two corners; ends at x = ±GAP on both faces */
+function sidePiece(S) {
+  const x = W / 2, y = D / 2, xi = IX, yi = IZ, r = R, ri = R - T;
+  const s = new THREE.Shape();
+  s.moveTo(S * GAP, -y);
+  s.lineTo(S * (x - r), -y); s.quadraticCurveTo(S * x, -y, S * x, -y + r);
+  s.lineTo(S * x, y - r);    s.quadraticCurveTo(S * x, y, S * (x - r), y);
+  s.lineTo(S * GAP, y);
+  s.lineTo(S * GAP, yi);
+  s.lineTo(S * (xi - ri), yi); s.quadraticCurveTo(S * xi, yi, S * xi, yi - ri);
+  s.lineTo(S * xi, -yi + ri);  s.quadraticCurveTo(S * xi, -yi, S * (xi - ri), -yi);
+  s.lineTo(S * GAP, -yi);
+  s.closePath(); return s;
+}
+
+/* ---- shell: two side pieces, a 2.5 mm front plate, a 1.5 mm rear panel ---- */
+prism(body, 'wall_side_right', mats.shell, sidePiece(1),  WALL_TOP - FLOOR, FLOOR);
+prism(body, 'wall_side_left',  mats.shell, sidePiece(-1), WALL_TOP - FLOOR, FLOOR);
+
+/* front face: two Ø4 switch windows and two Ø2 LED windows. Figure 4 puts them on
+   the front edge at 9 / 14 / 18 / 23 mm from the board's right edge; Figure 7 gives
+   the switches 3.3 mm tall and the LEDs 1.7 mm above the PCB */
+const front = new THREE.Shape();
+front.moveTo(-GAP, FLOOR); front.lineTo(GAP, FLOOR);
+front.lineTo(GAP, WALL_TOP); front.lineTo(-GAP, WALL_TOP); front.closePath();
+const hole = (x, y, r) => { const p = new THREE.Path(); p.absarc(x, y, r, 0, Math.PI * 2, true); return p; };
+[mm(-41), mm(-27)].forEach(x => front.holes.push(hole(x, PCB_TOP + mm(1.65), mm(2))));
+[mm(-36), mm(-32)].forEach(x => front.holes.push(hole(x, PCB_TOP + mm(0.85), mm(1))));
+const fm = new THREE.Mesh(
+  new THREE.ExtrudeGeometry(front, { depth: T, bevelEnabled: false, curveSegments: 24 }), mats.shell);
+fm.name = 'wall_front'; fm.position.z = -D / 2; body.add(fm);
+
+/* same plate with no windows, for the blank-front variant */
+const blank = new THREE.Shape();
+blank.moveTo(-GAP, FLOOR); blank.lineTo(GAP, FLOOR);
+blank.lineTo(GAP, WALL_TOP); blank.lineTo(-GAP, WALL_TOP); blank.closePath();
+const bm = new THREE.Mesh(
+  new THREE.ExtrudeGeometry(blank, { depth: T, bevelEnabled: false, curveSegments: 4 }), mats.shell);
+bm.name = 'wall_front_blank'; bm.position.z = -D / 2; bm.visible = false; body.add(bm);
+
+const CL = mm(0.6);
+const ports = [
+  { name: 'power_x5',     c: mm(-35.29), w: mm(17.30), h: mm(7.00),  clt: mm(0.6) },
+  { name: 'hdmi_x14',     c: mm(-15.79), w: mm(15.00), h: mm(6.28),  clt: mm(0.6) },
+  { name: 'usbc_x8',      c: mm(1.01),   w: mm(8.92),  h: mm(3.27),  clt: mm(0.6) },
+  { name: 'usb_stack_x9', c: mm(18.40),  w: mm(14.30), h: mm(16.12), clt: mm(0.4) },
+  { name: 'rj45_x2',      c: mm(35.80),  w: mm(15.74), h: mm(13.80), clt: mm(0.6) }
+];
+const panel = new THREE.Shape();
+panel.moveTo(-GAP, FLOOR); panel.lineTo(GAP, FLOOR);
+panel.lineTo(GAP, WALL_TOP); panel.lineTo(-GAP, WALL_TOP); panel.closePath();
+ports.forEach(p => {
+  const b = PCB_TOP - CL, t = PCB_TOP + p.h + p.clt;
+  panel.holes.push(rrPath(p.w + 2 * CL, t - b, mm(0.8), p.c, (b + t) / 2));
+});
+const pg = new THREE.ExtrudeGeometry(panel, { depth: TR, bevelEnabled: false, curveSegments: 10 });
+const pm = new THREE.Mesh(pg, mats.shell);
+pm.name = 'io_panel_rear'; pm.position.z = D / 2 - TR; body.add(pm);
+
+/* ---- corner posts: shell part. M3 from the base plate, magnet in the top ---- */
+CORNERS.forEach(([sx, sz], i) => {
+  const x = sx * PX, z = sz * PZ;
+  const shaft = prism(body, `corner_post_${i + 1}`, mats.shell, ring(mm(4), mm(1.4)),
+                      mm(30) - FLOOR, FLOOR);
+  shaft.position.set(x, FLOOR, z);
+  const well = prism(body, `corner_post_well_${i + 1}`, mats.shell, ring(mm(4), MAG_R), MAG_H, mm(30));
+  well.position.set(x, mm(30), z);
+
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(MAG_R - mm(0.1), MAG_R - mm(0.1), MAG_H, 32), mats.mag);
+  m.name = `magnet_shell_${i + 1}`; m.position.set(x, mm(31), z); body.add(m);
+
+  const head = new THREE.Mesh(new THREE.CylinderGeometry(mm(3), mm(3), mm(1.4), 28), mats.mag);
+  head.name = `screw_m3_base_${i + 1}`; head.position.set(x, mm(0.75), z); body.add(head);
+});
+
+/* ---- cover: plate floating 3.5 mm over the wall on four posts ---- */
+CORNERS.forEach(([sx, sz], i) => {
+  const x = sx * PX, z = sz * PZ;
+  const well = prism(body, `top_post_${i + 1}`, mats.cover, ring(mm(4), MAG_R), MAG_H, WALL_TOP);
+  well.position.set(x, WALL_TOP, z);
+  const solid = new THREE.Mesh(
+    new THREE.CylinderGeometry(mm(4), mm(4), TOP_Y - (WALL_TOP + MAG_H), 40), mats.cover);
+  solid.name = `top_post_head_${i + 1}`;
+  solid.position.set(x, (WALL_TOP + MAG_H + TOP_Y) / 2, z);
+  body.add(solid);
+
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(MAG_R - mm(0.1), MAG_R - mm(0.1), MAG_H, 32), mats.mag);
+  m.name = `magnet_cap_${i + 1}`; m.position.set(x, WALL_TOP + MAG_H / 2, z); body.add(m);
+});
+prism(body, 'top_plate', mats.cover, rrShape(W, D, R), TOP_T, TOP_Y);
+
+/* ---- base plate: four layers give real counterbores, blind pockets and engraved text ---- */
+const MNTX = mm(42), MNTZ = mm(22);
+const circle = (x, z, r) => { const p = new THREE.Path(); p.absarc(x, -z, r, 0, Math.PI * 2, true); return p; };
+
+/* stick-font strokes, mirrored in x so the text reads the right way up from below */
+function stroke(x1, y1, x2, y2, w) {
+  const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
+  const nx = -dy / L * w / 2, ny = dx / L * w / 2;
+  const p = new THREE.Path();
+  p.moveTo(-(x1 + nx), y1 + ny); p.lineTo(-(x2 + nx), y2 + ny);
+  p.lineTo(-(x2 - nx), y2 - ny); p.lineTo(-(x1 - nx), y1 - ny);
+  p.closePath(); return p;
+}
+const GLYPH = {
+  R: [[0,0,0,6],[0,6,2.6,6],[0,3.4,2.6,3.4],[2.6,3.4,2.6,6],[0.6,3.4,2.8,0]],
+  E: [[0,0,0,6],[0,6,2.8,6],[0,3.2,2.4,3.2],[0,0,2.8,0]],
+  V: [[0,6,1.5,0],[1.5,0,3,6]],
+  D: [[0,0,0,6],[0,6,2.2,6],[0,0,2.2,0],[2.6,0.6,2.6,5.4],[2.2,6,2.6,5.4],[2.2,0,2.6,0.6]]
+};
+function engrave(text, cx, cy, pitch = 4.6, sw = 0.9) {
+  const out = [];
+  let x = cx - (text.length * pitch - pitch + 3) / 2;
+  for (const ch of text) {
+    (GLYPH[ch] || []).forEach(([x1, y1, x2, y2]) =>
+      out.push(stroke(mm(x + x1), mm(cy + y1), mm(x + x2), mm(cy + y2), mm(sw))));
+    x += pitch;
+  }
+  return out;
+}
+const REV_TEXT = engrave('REV D', 0, 22);
+
+const layer = (name, h, y, screwR, pocket, extra = []) => {
+  const holes = extra.slice();
+  CORNERS.forEach(([sx, sz]) => {
+    holes.push(circle(sx * PX, sz * PZ, screwR));
+    if (pocket) holes.push(circle(sx * MNTX, sz * MNTZ, mm(5.2)));
+  });
+  prism(body, name, mats.base, rrShape(W, D, R), h, y, holes);
+};
+layer('base_plate_lower', mm(1.5), 0,       mm(3.1), true);
+layer('base_plate_mid',   mm(0.5), mm(1.5), mm(1.7), true);
+layer('base_plate_upper', mm(0.5), mm(2),   mm(1.7), false);
+
+/* four standoffs at the board's own Ø3.2 holes, M3 from above. The rear pair is Ø6
+   so it stays clear of the rear panel 3 mm behind it */
+CORNERS.forEach(([sx, sz], i) => {
+  const p = prism(body, `board_standoff_${i + 1}`, mats.base,
+                  ring(sz > 0 ? mm(3) : mm(3.5), mm(1.4)), STANDOFF, FLOOR);
+  p.position.set(sx * HX, FLOOR, BZ + sz * HZ);
+});
+
+/* ---- reference board ---- */
+prism(ref, 'pcb', mats.pcb, rrShape(PCB_W, PCB_D, mm(3)), PCB_T, PCB_Y).position.z = BZ;
+const OVER = { power_x5: mm(2.5), hdmi_x14: mm(1), usbc_x8: mm(1.5), usb_stack_x9: 0, rj45_x2: mm(2.5) };
+ports.forEach(p => {
+  const d = mm(16), o = OVER[p.name];
+  box(ref, `conn_${p.name}`, p.name === 'power_x5' ? mats.pcb : mats.metal,
+      p.w, p.h, d, p.c, PCB_TOP, BZ + PCB_D / 2 + o - d / 2);
+});
+box(ref, 'sodimm_socket_x1', mats.shell, mm(82), mm(4), mm(7), 0, PCB_TOP, BZ + mm(4));
+box(ref, 'verdin_som', mats.pcb, mm(69.6), mm(1.4), mm(45), 0, PCB_TOP + mm(6), BZ + mm(-4));
+box(ref, 'heatsink',   mats.metal, mm(64), mm(10), mm(40), 0, PCB_TOP + mm(7.4), BZ + mm(-4));
+
+/* centre on origin, rest on y = 0 */
+const bb = new THREE.Box3().setFromObject(root);
+root.position.set(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+
+/* ---- printable parts: each one exports on its own ---- */
+const PARTS = {
+  base:  { label: 'Base plate',  match: n => /^(base_plate|board_standoff)/.test(n) },
+  shell: { label: 'Shell',       match: n => /^(wall_|io_|corner_post)/.test(n) && n !== (blankFront ? 'wall_front' : 'wall_front_blank') },
+  cap:   { label: 'Top cover',   match: n => /^(top_plate|top_post)/.test(n) }
+};
+const isCap = n => /^(top_plate|top_post|magnet_cap)/.test(n);
+let blankFront = false;
+const EXPLODE = mm(34);
+const LIFT = { cap: mm(70), shell: mm(44), board: mm(16) };
+let exploded = false;
+const pool = [];
+body.children.slice().forEach(m => { m.userData.y0 = m.position.y; pool.push(m); });
+
+function applyExplode() {
+  pool.forEach(m => {
+    let d = 0;
+    if (exploded) {
+      if (isCap(m.name)) d = LIFT.cap;
+      else if (/^(wall_|io_|corner_post|magnet_shell|screw_m3_base)/.test(m.name)) d = LIFT.shell;
+    }
+    m.position.y = m.userData.y0 + d;
+  });
+  ref.position.y = exploded ? LIFT.board : 0;
+}
+
+function show(which) {
+  const g = new THREE.Group();
+  g.name = which === 'all' ? 'mallow_enclosure_assembly' : `mallow_${which}`;
+  const inner = new THREE.Group();
+  inner.name = 'part';
+  pool.forEach(m => {
+    if (m.name === 'wall_front') m.visible = !blankFront;
+    if (m.name === 'wall_front_blank') m.visible = blankFront;
+    if (which === 'all' || PARTS[which].match(m.name)) inner.add(m);
+  });
+  if (which === 'all') inner.add(ref);
+  applyExplode();
+  g.add(inner);
+  const b = new THREE.Box3().setFromObject(g);
+  inner.position.set(-(b.min.x + b.max.x) / 2, -b.min.y, -(b.min.z + b.max.z) / 2);
+  stage.setObject(g);
+  document.querySelectorAll('.parts button[data-part]').forEach(el => {
+    const on = el.dataset.part === which;
+    el.style.background = on ? '#3a4048' : '#fff';
+    el.style.color = on ? '#fff' : '#3a4048';
+  });
+}
+let current = 'all';
+document.querySelectorAll('.parts button[data-part]').forEach(el =>
+  el.addEventListener('click', () => { current = el.dataset.part; show(current); }));
+const xbtn = document.getElementById('explode');
+xbtn.addEventListener('click', () => {
+  exploded = !exploded;
+  xbtn.textContent = exploded ? 'Close it up' : 'Explode';
+  show(current);
+});
+const fbtn = document.getElementById('frontface');
+fbtn.addEventListener('click', () => {
+  blankFront = !blankFront;
+  fbtn.textContent = blankFront ? 'Front with windows' : 'Blank front';
+  show(current);
+});
+show('all');
+</script>
+</body>
+</html>

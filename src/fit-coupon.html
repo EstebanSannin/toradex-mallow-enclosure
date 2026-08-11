@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mallow enclosure — fit coupon</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>
+  html,body{margin:0;height:100%;background:#eeebe5;font-family:ui-sans-serif,system-ui,"Helvetica Neue",sans-serif}
+  three-d-stage:not(:defined){visibility:hidden}
+  three-d-stage{display:block;width:100vw;height:100vh}
+  .legend{position:fixed;left:20px;top:20px;z-index:5;font-size:12px;line-height:1.55;color:#3a4048;
+          background:rgba(255,255,255,.85);border:1px solid #ddd7cc;border-radius:4px;padding:12px 14px;max-width:262px;
+          max-height:calc(100vh - 40px);overflow:auto}
+  .legend h1{margin:0 0 6px;font-size:13px;font-weight:650}
+  .legend p{margin:0 0 4px;color:#6a7079}
+  .legend b{font-weight:600;color:#3a4048}
+  .legend ol{margin:4px 0 4px 16px;padding:0;color:#6a7079}
+  .legend li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#2b2e33">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#2b2e33"/>
+    <g fill="none" stroke="#eeebe5" stroke-width="12">
+      <rect x="380" y="280" width="440" height="240" rx="26"/>
+      <path d="M380 240h440M380 226v28M820 226v28" stroke-width="8"/>
+      <circle cx="450" cy="350" r="22"/><circle cx="750" cy="350" r="22"/>
+      <circle cx="450" cy="450" r="22"/><circle cx="750" cy="450" r="22"/>
+    </g>
+  </svg>
+</template>
+
+<div class="legend">
+  <h1>Fit coupon — print this first</h1>
+  <p>Two pieces, base down, same settings you will use for the box. About 12 g.</p>
+  <p><b>Magnet gauge</b> — three pockets, 2 mm deep. One dot Ø5.05, two dots Ø5.2, three dots Ø5.4. Push a 5 × 2 disc into each and tell me which one you want.</p>
+  <p><b>Corner coupon</b> — the real rear-right corner at full size: side wall, 6.5 mm outer radius, corner post with its Ø2.8 bore and magnet pocket, one board standoff, and the rear panel with the RJ45 window.</p>
+  <ol>
+    <li>Offer the board's corner into it — the corner should clear, with about 1 mm at the side wall.</li>
+    <li>Sit the board on the standoff and check the RJ45 lines up with the window.</li>
+    <li>Run an M3 self-tapper into the post bore and into the standoff.</li>
+    <li>Check a magnet sits flush in the post's top pocket.</li>
+  </ol>
+  <p>Nothing here is part of the enclosure — it is scrap once measured.</p>
+</div>
+<three-d-stage name="mallow-fit-coupon" background="#eeebe5"></three-d-stage>
+<script src="three-d-stage.js"></script>
+<script type="module">
+const stage = document.querySelector('three-d-stage');
+const { THREE } = await stage.ready;
+const mm = v => v / 1000;
+
+/* every number below is lifted from the rev D model */
+const W = mm(119), D = mm(78), R = mm(6.5), T = mm(2.5), TR = mm(1.5);
+const FLOOR = mm(2.5), STANDOFF = mm(10), PCB_T = mm(1.6);
+const PCB_Y = FLOOR + STANDOFF, PCB_TOP = PCB_Y + PCB_T;
+const IX = W / 2 - T, IZ = D / 2 - T;
+const CX = IX - (R - T), CZ = IZ - (R - T);
+const PX = mm(54.75), PZ = mm(32), GAP = mm(51);
+const BZ = mm(1.2), HX = mm(47), HZ = mm(33);
+const MAG_R = mm(2.6), MAG_H = mm(2);
+const RJ = { c: mm(35.80), w: mm(15.74), h: mm(13.80) }, CL = mm(0.6);
+
+const mats = {
+  part: new THREE.MeshStandardMaterial({ name: 'petg_black', color: 0x2b2e33, roughness: 0.55, metalness: 0.06 }),
+  gauge: new THREE.MeshStandardMaterial({ name: 'petg_black_2', color: 0x24272c, roughness: 0.6, metalness: 0.06 })
+};
+const root = new THREE.Group(); root.name = 'mallow_fit_coupon';
+
+function prism(parent, name, mat, shape, h, y, holes = []) {
+  holes.forEach(p => shape.holes.push(p));
+  const g = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false, curveSegments: 24 });
+  g.rotateX(-Math.PI / 2);
+  const m = new THREE.Mesh(g, mat);
+  m.name = name; m.position.y = y; parent.add(m); return m;
+}
+function ring(ro, ri) {
+  const s = new THREE.Shape(); s.absarc(0, 0, ro, 0, Math.PI * 2, false);
+  const h = new THREE.Path(); h.absarc(0, 0, ri, 0, Math.PI * 2, true);
+  s.holes.push(h); return s;
+}
+const circle = (x, z, r) => { const p = new THREE.Path(); p.absarc(x, -z, r, 0, Math.PI * 2, true); return p; };
+const rect = (x0, z0, x1, z1) => {
+  const s = new THREE.Shape();
+  s.moveTo(x0, -z0); s.lineTo(x1, -z0); s.lineTo(x1, -z1); s.lineTo(x0, -z1); s.closePath(); return s;
+};
+/* rounded rectangle traced clockwise — valid as a hole path */
+function rrPath(w, d, r, ox = 0, oy = 0) {
+  const p = new THREE.Path();
+  const x = w / 2 + ox, y = d / 2 + oy, nx = -w / 2 + ox, ny = -d / 2 + oy;
+  p.moveTo(nx + r, ny);
+  p.lineTo(x - r, ny); p.quadraticCurveTo(x, ny, x, ny + r);
+  p.lineTo(x, y - r);  p.quadraticCurveTo(x, y, x - r, y);
+  p.lineTo(nx + r, y); p.quadraticCurveTo(nx, y, nx, y - r);
+  p.lineTo(nx, ny + r);p.quadraticCurveTo(nx, ny, nx + r, ny);
+  p.closePath(); return p;
+}
+
+/* ---------- piece 1: corner coupon ---------- */
+const corner = new THREE.Group(); corner.name = 'corner_coupon'; root.add(corner);
+const X0 = mm(24), Z0 = mm(18), TOP = mm(30);
+
+/* footprint plate, 2.5 thick: square on the cut edges, true 6.5 radius on the outer corner */
+const plate = new THREE.Shape();
+plate.moveTo(X0, -Z0);
+plate.lineTo(W / 2, -Z0);
+plate.lineTo(W / 2, -(CZ));
+plate.quadraticCurveTo(W / 2, -(D / 2), CX, -(D / 2));
+plate.lineTo(X0, -(D / 2));
+plate.closePath();
+prism(corner, 'coupon_floor', mats.part, plate, FLOOR, 0,
+      [circle(PX, PZ, mm(1.4)), circle(HX, BZ + HZ, mm(1.4))]);
+
+/* side wall, corner arc, rear panel with the RJ45 window */
+const sideWall = new THREE.Shape();
+sideWall.moveTo(IX, -Z0); sideWall.lineTo(W / 2, -Z0);
+sideWall.lineTo(W / 2, -CZ);
+sideWall.quadraticCurveTo(W / 2, -(D / 2), CX, -(D / 2));
+sideWall.lineTo(CX, -IZ);
+sideWall.quadraticCurveTo(IX, -IZ, IX, -CZ);
+sideWall.closePath();
+prism(corner, 'coupon_wall', mats.part, sideWall, TOP - FLOOR, FLOOR);
+
+const rearPanel = new THREE.Shape();
+rearPanel.moveTo(X0, FLOOR); rearPanel.lineTo(GAP, FLOOR);
+rearPanel.lineTo(GAP, TOP); rearPanel.lineTo(X0, TOP); rearPanel.closePath();
+{
+  const b = PCB_TOP - CL, t = PCB_TOP + RJ.h + CL;
+  rearPanel.holes.push(rrPath(RJ.w + 2 * CL, t - b, mm(0.8), RJ.c, (b + t) / 2));
+}
+const rp = new THREE.Mesh(
+  new THREE.ExtrudeGeometry(rearPanel, { depth: TR, bevelEnabled: false, curveSegments: 8 }), mats.part);
+rp.name = 'coupon_rear_panel'; rp.position.z = D / 2 - TR; corner.add(rp);
+
+/* corner post and one board standoff, both as in the model */
+const post = prism(corner, 'coupon_post', mats.part, ring(mm(4), mm(1.4)), mm(28) - FLOOR, FLOOR);
+post.position.set(PX, FLOOR, PZ);
+const well = prism(corner, 'coupon_post_well', mats.part, ring(mm(4), MAG_R), MAG_H, mm(28));
+well.position.set(PX, mm(28), PZ);
+const sd = prism(corner, 'coupon_standoff', mats.part, ring(mm(3), mm(1.4)), STANDOFF, FLOOR);
+sd.position.set(HX, FLOOR, BZ + HZ);
+
+/* ---------- piece 2: magnet gauge ---------- */
+const gauge = new THREE.Group(); gauge.name = 'magnet_gauge'; root.add(gauge);
+const GW = mm(54), GD = mm(18), GH = mm(5);
+const pockets = [mm(5.05), mm(5.2), mm(5.4)];
+const px = [mm(-16), 0, mm(16)];
+const pocketHoles = px.map((x, i) => circle(x, 0, pockets[i] / 2));
+const dotHoles = [];
+px.forEach((x, i) => {
+  for (let k = 0; k <= i; k++) dotHoles.push(circle(x - mm(2) + k * mm(2), mm(-6), mm(0.7)));
+});
+prism(gauge, 'gauge_body', mats.gauge, rect(-GW / 2, -GD / 2, GW / 2, GD / 2), mm(3), 0);
+prism(gauge, 'gauge_mid', mats.gauge, rect(-GW / 2, -GD / 2, GW / 2, GD / 2), mm(1.4), mm(3), pocketHoles);
+prism(gauge, 'gauge_skin', mats.gauge, rect(-GW / 2, -GD / 2, GW / 2, GD / 2), mm(0.6), mm(4.4),
+      px.map((x, i) => circle(x, 0, pockets[i] / 2)).concat(dotHoles));
+gauge.position.set(mm(-52), 0, mm(-4));
+
+/* sit both pieces flat, centre the pair */
+const bb = new THREE.Box3().setFromObject(root);
+root.position.set(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+stage.setObject(root);
+</script>
+</body>
+</html>
